@@ -2,6 +2,7 @@ defmodule Gateway.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
@@ -12,6 +13,7 @@ defmodule Gateway.Application do
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Supervisor]
+    Logger.info("[Phoenix-Gateway] Application Starting in MIX_ENV=#{inspect(Mix.env())}")
     Supervisor.start_link(children, opts)
   end
 

@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  phoenix_gateway:
+    container_name: phoenix_gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    environment:
+      # will load config from `gateway/config/prod.exs`
+      MIX_ENV: prod
