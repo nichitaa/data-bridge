@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+  # Phoenix Gateway (WS API - Channels & REST API)
   phoenix_gateway:
     container_name: phoenix_gateway
     build:
@@ -11,3 +12,14 @@ services:
     environment:
       # will load config from `gateway/config/prod.exs`
       MIX_ENV: prod
+
+  # Client Application
+  react_client:
+    container_name: react_client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - phoenix_gateway

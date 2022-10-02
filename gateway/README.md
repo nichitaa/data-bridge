@@ -8,7 +8,7 @@ $ mix phx.new gateway --no-assets --no-ecto --no-html --no-gettext --no-mailer -
 ```
 
 ```shell
-$ # setup and run
+$ # setup and run localy
 $ mix setup
 $ iex --no-pry --sname node1 -S mix phx.server
 ```
