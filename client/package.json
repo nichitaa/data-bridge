@@ -9,10 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "phoenix": "^1.6.13",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "recoil": "^0.7.5"
   },
   "devDependencies": {
+    "@types/phoenix": "^1.5.4",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",
     "@vitejs/plugin-react": "^2.1.0",

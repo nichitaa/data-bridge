@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
+import { config } from './config/config';
+import PhxExample from './components/phx-example';
+import { useEffect } from 'react';
 
-const testRequest = async () => {
-  const base = import.meta.env.VITE_GATEWAY_BASE_URL;
-  return await fetch(`${base}/api/health_check/env`).then(res => res.json());
-};
+const healthCheckRequest = async () =>
+  await fetch(`${config.gatewayHttpBaseUrl}/api/health_check/env`).then((res) =>
+    res.json()
+  );
 
 const App = () => {
-  const [r, setR] = useState(undefined);
   useEffect(() => {
     (async () => {
-      const response = await testRequest();
-      setR(response);
+      const response = await healthCheckRequest();
+      console.log(response);
     })();
   }, []);
-  return <>
-    from app.tsx
-    <pre>
-      {JSON.stringify(r, null, 2)}
-    </pre>
-  </>;
+  return (
+    <>
+      <PhxExample />
+    </>
+  );
 };
 
 export default App;

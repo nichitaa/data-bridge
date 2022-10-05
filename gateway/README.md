@@ -12,3 +12,8 @@ $ # setup and run localy
 $ mix setup
 $ iex --no-pry --sname node1 -S mix phx.server
 ```
+
+```shell
+$ # shortcut
+$ iex --no-pry -S mix run
+```

@@ -1,6 +1,10 @@
 defmodule GatewayWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :gateway
 
+  socket "/socket", GatewayWeb.WorkspaceSocket,
+    websocket: true,
+    longpoll: false
+
   @session_options [
     store: :cookie,
     key: "_gateway_key",

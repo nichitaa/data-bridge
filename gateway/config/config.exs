@@ -6,7 +6,16 @@ config :gateway, GatewayWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: GatewayWeb.ErrorView, accepts: ~w(json), layout: false],
   pubsub_server: Gateway.PubSub,
-  live_view: [signing_salt: "av1ppOas"]
+  live_view: [signing_salt: "av1ppOas"],
+  # configuring Cowboy2Adapter: https://hexdocs.pm/phoenix/Phoenix.Endpoint.Cowboy2Adapter.html
+  http: [
+    transport_options: [
+      # => increase for prod (I don't want to see that many processes in :observer.start)
+      num_acceptors: 2,
+      # => default
+      max_connections: 16_384
+    ]
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,

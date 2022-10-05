@@ -5,6 +5,8 @@ config :gateway, GatewayWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
+  # start Endpoint straight away with `mix run`
+  server: true,
   secret_key_base: "Mh1ENB0Sqa/QHLUx1umXWvnvmBNayZxBWucJR5kTGJKonJxXzMndIEYtvyYMJjhK",
   watchers: []
 
