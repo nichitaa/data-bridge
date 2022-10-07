@@ -23,3 +23,15 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
+  auth-service:
+    image: nicolaedockerid/authservice
+    ports:
+      - 8080:80
+  ms-sql-server:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "aDMIN123*"
+      MSSQL_PID: EXPRESS
+    ports:
+      - 1433:1433
