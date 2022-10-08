@@ -8,7 +8,7 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     ports:
-      - "9999:9999"
+      - '9999:9999'
     environment:
       # will load config from `gateway/config/prod.exs`
       MIX_ENV: prod
@@ -23,10 +23,14 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
+
+  # Auth Service API
   auth-service:
     image: nicolaedockerid/authservice
     ports:
-      - 8080:80
+      - '8080:80'
+
+  # MSSQL instance (for Auth Service)
   ms-sql-server:
     image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
     environment:
@@ -34,4 +38,4 @@ services:
       SA_PASSWORD: "aDMIN123*"
       MSSQL_PID: EXPRESS
     ports:
-      - 1433:1433
+      - '1433:1433'
