@@ -11,7 +11,8 @@ defmodule Gateway.Application do
       {Finch, name: FinchClient},
       GatewayWeb.Telemetry,
       {Phoenix.PubSub, name: Gateway.PubSub},
-      GatewayWeb.Endpoint
+      GatewayWeb.Endpoint,
+      GatewayWeb.WorkspacePresence
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Supervisor]

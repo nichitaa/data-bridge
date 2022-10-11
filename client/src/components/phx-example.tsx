@@ -1,8 +1,9 @@
 import { usePhxSocket } from '../hooks/use-phx-socket';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PhxSocketStatus } from '../recoil/atoms';
 import { usePhxChannel } from '../hooks/use-phx-channel';
 import { logger } from '../utils/logger';
+import { usePhxPresence } from '../hooks/use-phx-presence';
 
 export const PhxExample = () => {
   const { connect, status } = usePhxSocket();
@@ -23,16 +24,27 @@ export const PhxExample = () => {
   );
 };
 
+const uniqId = Math.random().toString();
+console.log('myId: ', uniqId);
+
 export const PhxChannel = () => {
   const { disconnect } = usePhxSocket();
   const { channelStatus, channel, leave, join, push, handleChannelEvent } =
     usePhxChannel({
       channelName: 'workspace:lobby',
-      channelParams: { token: '123123' },
+      channelParams: { token: uniqId },
       joinOnMountLeaveOnUnmount: true,
       onLeave: (response) => logger.log('onLeave response: ', response),
-      onJoin: (response) => logger.log('onJoin response: ', response),
+      //onJoin: (response) => logger.log('onJoin response: ', response),
     });
+  const [currentActiveUsers, setCurrentActiveUsers] = useState([]);
+  const { handlePresenceSync } = usePhxPresence(channel);
+
+  useEffect(() => {
+    handlePresenceSync((presence) => {
+      setCurrentActiveUsers(presence);
+    });
+  }, [handlePresenceSync]);
 
   useEffect(() => {
     const subscriptionRef = handleChannelEvent('from_server', (payload) => {
@@ -55,9 +67,15 @@ export const PhxChannel = () => {
   return (
     <>
       channel status {channelStatus}
+      <br />
+      active users {currentActiveUsers.length}
+      <br />
       <button onClick={disconnect}>disconnect</button>
+      <br />
       <button onClick={leave}>leave</button>
+      <br />
       <button onClick={join}>join</button>
+      <br />
       <button onClick={handlePush}>push</button>
     </>
   );

@@ -11,7 +11,7 @@ const App = () => {
   useEffect(() => {
     (async () => {
       const response = await healthCheckRequest();
-      console.log(response);
+      // console.log(response);
     })();
   }, []);
   return (
