@@ -1,23 +1,13 @@
-import { config } from './config/config';
-import PhxExample from './components/phx-example';
-import { useEffect } from 'react';
-
-const healthCheckRequest = async () =>
-  await fetch(`${config.gatewayHttpBaseUrl}/api/health_check/env`).then((res) =>
-    res.json()
-  );
+import { AppRouter, Routes } from 'auth-react-router';
+import { routes } from './routes';
+import { useAuth } from './hooks/use-auth';
 
 const App = () => {
-  useEffect(() => {
-    (async () => {
-      const response = await healthCheckRequest();
-      // console.log(response);
-    })();
-  }, []);
+  const { isAuthorized } = useAuth();
   return (
-    <>
-      <PhxExample />
-    </>
+    <AppRouter routes={routes} isAuth={isAuthorized}>
+      <Routes />
+    </AppRouter>
   );
 };
 
