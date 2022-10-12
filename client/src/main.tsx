@@ -4,6 +4,7 @@ import App from './app';
 import { RecoilRoot } from 'recoil';
 import MuiThemeProvider from './shared/mui-theme.provider';
 import { BrowserRouter } from 'react-router-dom';
+import 'react-resizable/css/styles.css';
 
 const app = (
   <MuiThemeProvider>

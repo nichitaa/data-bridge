@@ -3,10 +3,13 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from './hooks/use-auth';
 import LoginPage from './pages/login-page';
+import DashboardPage from './pages/dashboard/dashboard-page';
+import Header from './shared/header';
 
 const PrivatePagesOutlet = () => {
   return (
     <>
+      <Header />
       <Outlet />
     </>
   );
@@ -46,7 +49,7 @@ export const routes: IRoutesConfig = {
       children: [
         {
           index: true,
-          component: <>/dashboard index page</>,
+          component: <DashboardPage />,
         },
       ],
     },

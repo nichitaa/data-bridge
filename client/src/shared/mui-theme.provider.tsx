@@ -59,7 +59,7 @@ const globalStyles = (
         // overflow: 'hidden',
       },
       '&::-webkit-scrollbar': {
-        width: 7,
+        maxWidth: 7,
         height: 7,
       },
       '&::-webkit-scrollbar-track': {

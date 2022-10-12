@@ -10,7 +10,7 @@ const LoginPage = () => {
           gap: 1,
           display: 'flex',
           flexDirection: 'column',
-          width: 300,
+          maxWidth: 300,
           borderRadius: '5px',
           border: `2px solid ${alpha('#fff', 0.1)}`,
           margin: 'auto',
