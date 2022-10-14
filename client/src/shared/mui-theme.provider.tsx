@@ -11,6 +11,14 @@ import type {} from '@mui/lab/themeAugmentation';
 
 import { FC } from 'react';
 
+// in the file where you are creating the theme (invoking the function `createTheme()`)
+import { Theme } from '@mui/material/styles';
+
+// https://mui.com/material-ui/migration/v5-style-changes/#%E2%9C%85-add-module-augmentation-for-defaulttheme-typescript
+declare module '@mui/styles' {
+  interface DefaultTheme extends Theme {}
+}
+
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
