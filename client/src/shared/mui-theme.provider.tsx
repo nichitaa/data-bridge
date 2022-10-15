@@ -3,6 +3,7 @@ import {
   createTheme,
   CssBaseline,
   GlobalStyles,
+  inputBaseClasses,
   outlinedInputClasses,
   ThemeProvider,
 } from '@mui/material';
@@ -43,6 +44,12 @@ const darkTheme = createTheme({
         },
       },
     },
+    MuiButton: {
+      defaultProps: {
+        variant: 'outlined',
+        size: 'small',
+      },
+    },
     MuiLoadingButton: {
       defaultProps: {
         variant: 'outlined',
@@ -51,6 +58,22 @@ const darkTheme = createTheme({
     MuiTextField: {
       defaultProps: {
         size: 'small',
+      },
+      styleOverrides: {
+        root: {
+          [`& .${inputBaseClasses.root}`]: {
+            height: 30,
+          },
+          [`& .${inputBaseClasses.input}`]: {
+            height: 30,
+            paddingTop: 0,
+            paddingBottom: 0,
+            '&::placeholder': {
+              fontStyle: 'italic',
+              fontSize: 14,
+            },
+          },
+        },
       },
     },
   },

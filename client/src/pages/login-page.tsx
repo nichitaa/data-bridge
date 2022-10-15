@@ -29,8 +29,8 @@ const LoginPage = () => {
         >
           Connect
         </Typography>
-        <TextField required label='email' autoComplete={'off'} />
-        <TextField required autoComplete={'off'} label='password' />
+        <TextField required placeholder='email' autoComplete={'off'} />
+        <TextField required placeholder='password' autoComplete={'off'} />
         <Grid container spacing={1}>
           <Grid item xs>
             <LoadingButton color={'secondary'} fullWidth>

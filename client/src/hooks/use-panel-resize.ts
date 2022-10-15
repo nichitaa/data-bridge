@@ -25,7 +25,8 @@ export const usePanelResize = (params: Params) => {
     const animationStepFn = () => {
       setSize((prev) => {
         if (prev <= maxWidth) {
-          prev += 30;
+          // 100 - step (increase to adjust animation speed)
+          prev += 100;
           animationRequestRef.current =
             window.requestAnimationFrame(animationStepFn);
           return prev;
