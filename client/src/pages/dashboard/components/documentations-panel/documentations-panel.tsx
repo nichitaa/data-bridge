@@ -8,6 +8,7 @@ import { Box, BoxProps } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { StyledExpandPanelIconButton } from '../collections-panel/collections-panel';
 import { styled } from '@mui/styles';
+import DocumentationsEditor from './documentations-editor';
 
 interface MainProps {
   dimensions: { height: number; width: number };
@@ -25,13 +26,20 @@ const DocumentationsPanel = (props: MainProps) => {
   if (props.dimensions.width <= 35) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: '8px' }}>
-        <StyledExpandPanelIconButton size={'small'} onClick={handleMaximizePanel}>
+        <StyledExpandPanelIconButton
+          size={'small'}
+          onClick={handleMaximizePanel}
+        >
           <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
         </StyledExpandPanelIconButton>
       </Box>
     );
   }
-  return <StyledDocumentationPanel>Documentation</StyledDocumentationPanel>;
+  return (
+    <StyledDocumentationPanel>
+      <DocumentationsEditor />
+    </StyledDocumentationPanel>
+  );
 };
 
 const StyledDocumentationPanel = styled(Box)<BoxProps>(({ theme }) => ({
