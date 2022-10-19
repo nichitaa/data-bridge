@@ -14,13 +14,16 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { MouseEventHandler } from 'react';
 
 interface MainProps extends DefaultNodeProps {}
 
 const CollectionTreeNode = (props: MainProps) => {
   const { node } = props;
-  const toggle = () =>
+  const toggle: MouseEventHandler = (e) => {
+    e.stopPropagation();
     treeHandlers.trees.collections.handlers.setOpen(node, !node.isSelected());
+  };
   return (
     <StyledTreeNode
       key={`${node.data.id}_${node.data.collection}`}

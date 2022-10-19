@@ -9,13 +9,16 @@ import {
   StyledNodeTypography,
   StyledTreeNode,
 } from './collection-tree-node';
+import { MouseEventHandler } from 'react';
 
 interface MainProps extends DefaultNodeProps {}
 
 const FolderTreeNode = (props: MainProps) => {
   const { node } = props;
-  const toggle = () =>
+  const toggle: MouseEventHandler = (e) => {
+    e.stopPropagation();
     treeHandlers.trees.collections.handlers.setOpen(node, !node.isSelected());
+  };
   return (
     <StyledTreeNode key={`${node.data.id}_${node.data.folder}`} type={'folder'}>
       <Box className={'labelWrapper'} onClick={toggle}>
