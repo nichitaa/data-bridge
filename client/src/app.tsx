@@ -1,11 +1,14 @@
 import { AppRouter, Routes } from 'auth-react-router';
 import { routes } from './routes';
-import { useAuth } from './hooks/use-auth';
+import { useRecoilValue } from 'recoil';
+import { authorizationStatusAtom } from './recoil/atoms';
+import { useJwtAuth } from './hooks/use-jwt-auth';
 
 const App = () => {
-  const { isAuthorized } = useAuth();
+  const authStatus = useRecoilValue(authorizationStatusAtom);
+  useJwtAuth();
   return (
-    <AppRouter routes={routes} isAuth={isAuthorized}>
+    <AppRouter routes={routes} isAuth={authStatus.authorized}>
       <Routes />
     </AppRouter>
   );

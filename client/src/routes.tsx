@@ -1,10 +1,12 @@
 import { IRoutesConfig } from 'auth-react-router';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useAuth } from './hooks/use-auth';
+import { useJwtAuth } from './hooks/use-jwt-auth';
 import LoginPage from './pages/login-page';
 import DashboardPage from './pages/dashboard/dashboard-page';
 import Header from './shared/header';
+import { useRecoilValue } from 'recoil';
+import { authorizationStatusAtom } from './recoil/atoms';
 
 const PrivatePagesOutlet = () => {
   return (
@@ -17,17 +19,18 @@ const PrivatePagesOutlet = () => {
 
 const CheckAuthPage = () => {
   const navigate = useNavigate();
-  const { isAuthorized, isLoading } = useAuth();
+  const authStatus = useRecoilValue(authorizationStatusAtom);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (isAuthorized) {
+    console.log('[check-auth]: ', authStatus);
+    if (!authStatus.loading) {
+      if (authStatus.authorized) {
         navigate('/dashboard');
       } else {
         navigate('/login');
       }
     }
-  }, [isLoading, isAuthorized]);
+  }, [authStatus]);
 
   return null;
 };

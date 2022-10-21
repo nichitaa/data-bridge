@@ -1,6 +1,7 @@
 import { atom } from 'recoil';
 import { Socket } from 'phoenix';
 import { config } from '../config/config';
+import { localStorageEffect } from './effects';
 
 export enum PhxSocketStatus {
   UNINSTANTIATED = 'UNINSTANTIATED',
@@ -19,6 +20,21 @@ export const socketAtom = atom<Socket | undefined>({
 export const socketStatusAtom = atom<PhxSocketStatus>({
   key: 'socketStatusAtom',
   default: PhxSocketStatus.UNINSTANTIATED,
+});
+
+// Authorization
+export const jwtAtom = atom<string | undefined>({
+  key: 'jwtAtom',
+  default: undefined,
+  effects: [localStorageEffect('dbruh')],
+});
+
+export const authorizationStatusAtom = atom({
+  key: 'authorizationStatusAtom',
+  default: {
+    loading: false,
+    authorized: false,
+  },
 });
 
 /** UI */
@@ -43,7 +59,7 @@ export const collectionsPanelMaxSizeAtom = atom({
 // Documentation Panel
 export const documentationPanelSizeAtom = atom({
   key: 'documentationPanelSizeAtom',
-  default: Number.MAX_VALUE,
+  default: 30,
 });
 
 export const documentationPanelMinSizeAtom = atom({

@@ -45,6 +45,7 @@ const DocumentationsPanel = (props: MainProps) => {
 const StyledDocumentationPanel = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 8,
   height: '100%',
+  minWidth: 425,
 }));
 
 export default DocumentationsPanel;
