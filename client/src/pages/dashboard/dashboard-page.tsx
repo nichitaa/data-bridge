@@ -18,7 +18,7 @@ import {
   documentationPanelSizeAtom,
 } from '../../recoil/atoms';
 import { styled } from '@mui/styles';
-import EditorPanel from './components/editor-panel/editor-panel';
+import EditorPanel from "./components/editor-panel/editor-panel";
 
 const dashboardPageClasses = generateUtilityClasses('DashboardPage', [
   'horizontalHandler',
@@ -81,7 +81,7 @@ const DashboardPage = () => {
             >
               <Box className={cls.editorPanelHeader}>Editor panel</Box>
               {/*@ts-ignore*/}
-              <EditorPanel />
+              <EditorPanel/>
             </ReflexElement>
             <ReflexSplitter
               propagate
