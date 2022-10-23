@@ -18,12 +18,12 @@ import {
   documentationPanelSizeAtom,
 } from '../../recoil/atoms';
 import { styled } from '@mui/styles';
-import EditorPanel from "./components/editor-panel/editor-panel";
+import EditorPanel from './components/editor-panel/editor-panel';
+import EditorPanelHeader from './components/editor-panel/editor-panel-header';
 
 const dashboardPageClasses = generateUtilityClasses('DashboardPage', [
   'horizontalHandler',
   'splitter',
-  'editorPanelHeader',
 ]);
 
 const cls = dashboardPageClasses;
@@ -79,9 +79,9 @@ const DashboardPage = () => {
               propagateDimensionsRate={200}
               propagateDimensions
             >
-              <Box className={cls.editorPanelHeader}>Editor panel</Box>
+              <EditorPanelHeader />
               {/*@ts-ignore*/}
-              <EditorPanel/>
+              <EditorPanel />
             </ReflexElement>
             <ReflexSplitter
               propagate
@@ -128,16 +128,6 @@ const StyledDashboardPage = styled(Box)<BoxProps>(({ theme }) => ({
   [`& .${cls.horizontalHandler}`]: {
     cursor: 'row-resize!important',
     height: 30,
-    display: 'flex',
-    paddingLeft: 8,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    border: `1px solid ${alpha('#fff', 0.1)}`,
-  },
-  [`& .${cls.editorPanelHeader}`]: {
-    // -1px because of the border from Result panel
-    height: 29,
-    overflow: 'hidden',
     display: 'flex',
     paddingLeft: 8,
     justifyContent: 'flex-start',
