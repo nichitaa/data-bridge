@@ -1,4 +1,3 @@
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
   alpha,
   Box,
@@ -6,6 +5,8 @@ import {
   generateUtilityClasses,
   IconButton,
   styled,
+  svgIconClasses,
+  Tooltip,
   useTheme,
 } from '@mui/material';
 import { usePanelResize } from '../../../../hooks/use-panel-resize';
@@ -21,6 +22,7 @@ import CollectionTreeNode from './tree-nodes/collection-tree-node';
 import FolderTreeNode from './tree-nodes/folder-tree-node';
 import QueryTreeNode from './tree-nodes/query-tree-node';
 import ActionBar from './action-bar';
+import SettingsEthernetOutlinedIcon from '@mui/icons-material/SettingsEthernetOutlined';
 
 const data = [
   {
@@ -134,13 +136,15 @@ const CollectionsPanel = (props: MainProps) => {
 
   if (props.dimensions.width <= 35) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', pt: '8px' }}>
-        <StyledExpandPanelIconButton
-          size={'small'}
-          onClick={handleMaximizePanel}
-        >
-          <ArrowForwardIosIcon sx={{ fontSize: 16 }} />
-        </StyledExpandPanelIconButton>
+      <Box sx={{ display: 'flex', justifyContent: 'center', pt: '4px' }}>
+        <Tooltip title={'Expand collections panel'}>
+          <StyledExpandPanelIconButton
+            size={'small'}
+            onClick={handleMaximizePanel}
+          >
+            <SettingsEthernetOutlinedIcon />
+          </StyledExpandPanelIconButton>
+        </Tooltip>
       </Box>
     );
   }
@@ -172,10 +176,16 @@ const CollectionsPanel = (props: MainProps) => {
 };
 
 export const StyledExpandPanelIconButton = styled(IconButton)(({ theme }) => ({
-  border: '1px solid',
-  borderColor: alpha(theme.palette.primary.main, 0.5),
   borderRadius: 4,
   padding: 2,
+  backgroundColor: alpha(theme.palette.info.main, 0.2),
+  color: theme.palette.info.main,
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.info.main, 0.3),
+  },
+  [`& .${svgIconClasses.root}`]: {
+    fontSize: 18,
+  },
 }));
 
 const StyledCollectionPanel = styled(Box)<BoxProps>(({ theme }) => ({

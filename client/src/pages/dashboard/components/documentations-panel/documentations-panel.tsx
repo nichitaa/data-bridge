@@ -4,11 +4,11 @@ import {
   documentationPanelMinSizeAtom,
   documentationPanelSizeAtom,
 } from '../../../../recoil/atoms';
-import { Box, BoxProps } from '@mui/material';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { Box, BoxProps, Tooltip } from '@mui/material';
 import { StyledExpandPanelIconButton } from '../collections-panel/collections-panel';
 import { styled } from '@mui/styles';
 import DocumentationsEditor from './documentations-editor';
+import SettingsEthernetOutlinedIcon from '@mui/icons-material/SettingsEthernetOutlined';
 
 interface MainProps {
   dimensions: { height: number; width: number };
@@ -25,13 +25,15 @@ const DocumentationsPanel = (props: MainProps) => {
 
   if (props.dimensions.width <= 35) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', pt: '8px' }}>
-        <StyledExpandPanelIconButton
-          size={'small'}
-          onClick={handleMaximizePanel}
-        >
-          <ArrowBackIosNewIcon sx={{ fontSize: 16 }} />
-        </StyledExpandPanelIconButton>
+      <Box sx={{ display: 'flex', justifyContent: 'center', pt: '4px' }}>
+        <Tooltip title={'Expand documentation panel'}>
+          <StyledExpandPanelIconButton
+            size={'small'}
+            onClick={handleMaximizePanel}
+          >
+            <SettingsEthernetOutlinedIcon />
+          </StyledExpandPanelIconButton>
+        </Tooltip>
       </Box>
     );
   }
