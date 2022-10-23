@@ -16,6 +16,7 @@
     "@mui/lab": "^5.0.0-alpha.103",
     "@mui/material": "^5.10.9",
     "@mui/styles": "^5.10.9",
+    "@mui/x-data-grid": "^5.17.8",
     "@react-hookz/web": "^16.0.0",
     "@uiw/codemirror-extensions-basic-setup": "^4.12.4",
     "@uiw/codemirror-extensions-langs": "^4.12.4",

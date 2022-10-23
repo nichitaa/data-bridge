@@ -8,9 +8,10 @@ import {
   textFieldClasses,
   Tooltip,
   Typography,
+  typographyClasses,
 } from '@mui/material';
 import EditorPanelActions, {
-  StyledEditorPanelIconActionButton,
+  StyledActionIconButton,
 } from './editor-panel-actions';
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 
@@ -29,9 +30,9 @@ const EditorPanelHeader = () => {
           <Box className={cls.queryNameTextField}>
             <TextField disabled={true} value={'query name'} />
             <Tooltip title={'Rename query'}>
-              <StyledEditorPanelIconActionButton variant={'warning'}>
+              <StyledActionIconButton variant={'warning'}>
                 <DriveFileRenameOutlineOutlinedIcon />
-              </StyledEditorPanelIconActionButton>
+              </StyledActionIconButton>
             </Tooltip>
           </Box>
         </Box>
@@ -44,22 +45,31 @@ const EditorPanelHeader = () => {
 const StyledEditorPanelHeader = styled(Box)(({ theme }) => ({
   // -1px because of the border from Result panel
   height: 29,
-  overflow: 'hidden',
   display: 'flex',
   paddingLeft: 8,
   paddingRight: 8,
   justifyContent: 'space-between',
   alignItems: 'center',
+  overflowX: 'auto',
+  overflowY: 'hidden',
   border: `1px solid ${alpha('#fff', 0.1)}`,
   [`& .${cls.editorHeaderWrapper}`]: {
     display: 'flex',
     height: '100%',
+    paddingRight: 6,
+    [`& .${typographyClasses.root}`]: {
+      display: 'flex',
+      alignItems: 'center',
+      whiteSpace: 'nowrap',
+    },
     [`& .${cls.queryNameTextField}`]: {
       paddingLeft: 20,
       height: '100%',
       display: 'flex',
       alignItems: 'center',
+      gap: 6,
       [`& .${textFieldClasses.root}`]: {
+        minWidth: 60,
         height: '22px',
         [`& .${outlinedInputClasses.root}`]: {
           // border: '1px solid red',

@@ -160,20 +160,31 @@ export const StyledTreeNode = styled(Box, {
     display: 'inline-flex',
     flexGrow: 1,
   },
+  border: '1px solid',
+  marginTop: 2,
   ...(type === 'collection'
     ? {
-        marginTop: 8,
-        border: `1px solid ${alpha(theme.palette.warning.main, 0.5)}`,
+        borderColor: alpha(theme.palette.warning.main, 0.3),
+        backgroundColor: alpha(theme.palette.warning.main, 0.1),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.warning.main, 0.2),
+        },
       }
     : type === 'folder'
     ? {
-        marginTop: '2px',
-        border: `1px solid ${alpha(theme.palette.info.main, 0.5)}`,
+        borderColor: alpha(theme.palette.info.main, 0.3),
+        backgroundColor: alpha(theme.palette.info.main, 0.1),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.info.main, 0.2),
+        },
       }
     : type === 'query'
     ? {
-        marginTop: '2px',
-        border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+        borderColor: alpha(theme.palette.primary.main, 0.3),
+        backgroundColor: alpha(theme.palette.primary.main, 0.1),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.3),
+        },
       }
     : {}),
 }));
@@ -185,6 +196,8 @@ export const StyledNodeTypography = styled(Typography)<TypographyProps>(
     whiteSpace: 'nowrap',
     display: 'flex',
     alignItems: 'center',
+    flexGrow: 1,
+    justifyContent: 'space-between',
     '& code': {
       fontSize: 10,
       marginLeft: 10,

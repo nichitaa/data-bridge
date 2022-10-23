@@ -20,36 +20,36 @@ const EditorPanelActions = () => {
   return (
     <StyledEditorPanelActions className={cls.wrapper}>
       <Tooltip title={'Execute query'}>
-        <StyledEditorPanelIconActionButton variant={'success'}>
+        <StyledActionIconButton variant={'success'}>
           <PlayCircleFilledIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
       <Tooltip title={'Format query'}>
-        <StyledEditorPanelIconActionButton variant={'info'}>
+        <StyledActionIconButton variant={'info'}>
           <LocalFloristOutlinedIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
       <Tooltip title={'See documentation'}>
-        <StyledEditorPanelIconActionButton variant={'info'}>
+        <StyledActionIconButton variant={'info'}>
           <BookOutlinedIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
 
       <Tooltip title={'Save query'}>
-        <StyledEditorPanelIconActionButton variant={'success'}>
+        <StyledActionIconButton variant={'success'}>
           <SaveOutlinedIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
 
       <Tooltip title={'Pull updates'}>
-        <StyledEditorPanelIconActionButton variant={'warning'}>
+        <StyledActionIconButton variant={'warning'}>
           <SyncAltOutlinedIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
       <Tooltip title={'Delete query'}>
-        <StyledEditorPanelIconActionButton variant={'error'}>
+        <StyledActionIconButton variant={'error'}>
           <DeleteOutlinedIcon />
-        </StyledEditorPanelIconActionButton>
+        </StyledActionIconButton>
       </Tooltip>
     </StyledEditorPanelActions>
   );
@@ -59,16 +59,16 @@ const StyledEditorPanelActions = styled(`div`)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   alignItems: 'center',
+  gap: 6,
 }));
 
 interface StyledEditorPanelIconActionButtonProps extends IconButtonProps {
   variant?: 'error' | 'success' | 'warning' | 'info';
 }
 
-export const StyledEditorPanelIconActionButton = styled(IconButton, {
+export const StyledActionIconButton = styled(IconButton, {
   shouldForwardProp: (prop) => !['variant'].includes(prop as string),
 })<StyledEditorPanelIconActionButtonProps>(({ theme, variant }) => ({
-  marginLeft: 8,
   borderRadius: 4,
   padding: 2,
   ...(variant === 'error'

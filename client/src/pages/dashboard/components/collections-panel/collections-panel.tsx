@@ -3,9 +3,7 @@ import {
   Box,
   BoxProps,
   generateUtilityClasses,
-  IconButton,
   styled,
-  svgIconClasses,
   Tooltip,
   useTheme,
 } from '@mui/material';
@@ -23,45 +21,46 @@ import FolderTreeNode from './tree-nodes/folder-tree-node';
 import QueryTreeNode from './tree-nodes/query-tree-node';
 import ActionBar from './action-bar';
 import SettingsEthernetOutlinedIcon from '@mui/icons-material/SettingsEthernetOutlined';
+import { StyledActionIconButton } from '../editor-panel/editor-panel-actions';
 
 const data = [
   {
     id: 1,
-    collection: 'collection Name',
+    collection: 'employees',
     children: [
       {
         id: 2,
-        folder: 'folder Name',
+        folder: 'management dep',
         children: [
           {
             id: 3,
-            query: 'query 1__1',
+            query: 'annual report',
           },
           {
             id: 4,
-            query: 'query 1__2',
+            query: 'insert',
           },
           {
             id: 5,
-            query: 'query 1__3',
+            query: 'statistics',
           },
         ],
       },
       {
         id: 6,
-        folder: 'folder Name 2',
+        folder: 'IT department',
         children: [
           {
             id: 7,
-            query: 'query 1__1',
+            query: 'statistics',
           },
           {
             id: 8,
-            query: 'query 1__2',
+            query: 'monthly report',
           },
           {
             id: 9,
-            query: 'query 1__3',
+            query: 'general report',
           },
         ],
       },
@@ -138,12 +137,12 @@ const CollectionsPanel = (props: MainProps) => {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: '4px' }}>
         <Tooltip title={'Expand collections panel'}>
-          <StyledExpandPanelIconButton
-            size={'small'}
+          <StyledActionIconButton
+            variant={'info'}
             onClick={handleMaximizePanel}
           >
             <SettingsEthernetOutlinedIcon />
-          </StyledExpandPanelIconButton>
+          </StyledActionIconButton>
         </Tooltip>
       </Box>
     );
@@ -165,7 +164,7 @@ const CollectionsPanel = (props: MainProps) => {
         }}
         verticalLineStyles={{
           stroke: theme.palette.primary.main,
-          strokeWidth: 1,
+          strokeWidth: 0.5,
         }}
         // verticalLineOffset={5}
         // verticalLineTopOffset={-2}
@@ -175,26 +174,13 @@ const CollectionsPanel = (props: MainProps) => {
   );
 };
 
-export const StyledExpandPanelIconButton = styled(IconButton)(({ theme }) => ({
-  borderRadius: 4,
-  padding: 2,
-  backgroundColor: alpha(theme.palette.info.main, 0.2),
-  color: theme.palette.info.main,
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.info.main, 0.3),
-  },
-  [`& .${svgIconClasses.root}`]: {
-    fontSize: 18,
-  },
-}));
-
 const StyledCollectionPanel = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 8,
   height: '100%',
   minWidth: 250,
   [`& .${cls.selectedQuery}`]: {
     borderRadius: 3,
-    backgroundColor: alpha(theme.palette.primary.main, 0.2),
+    backgroundColor: alpha(theme.palette.primary.main, 0.4),
   },
 }));
 

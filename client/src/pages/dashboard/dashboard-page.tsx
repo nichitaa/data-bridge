@@ -20,6 +20,7 @@ import {
 import { styled } from '@mui/styles';
 import EditorPanel from './components/editor-panel/editor-panel';
 import EditorPanelHeader from './components/editor-panel/editor-panel-header';
+import ResultPanelHeader from './components/query-result-panel/result-panel-header';
 
 const dashboardPageClasses = generateUtilityClasses('DashboardPage', [
   'horizontalHandler',
@@ -96,7 +97,7 @@ const DashboardPage = () => {
               propagateDimensionsRate={200}
             >
               <ReflexHandle className={cls.horizontalHandler}>
-                Result Explorer
+                <ResultPanelHeader />
               </ReflexHandle>
               {/* @ts-ignore */}
               <QueryResultPanel />
@@ -128,10 +129,6 @@ const StyledDashboardPage = styled(Box)<BoxProps>(({ theme }) => ({
   [`& .${cls.horizontalHandler}`]: {
     cursor: 'row-resize!important',
     height: 30,
-    display: 'flex',
-    paddingLeft: 8,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
     border: `1px solid ${alpha('#fff', 0.1)}`,
   },
   [`& .${cls.splitter}`]: {
