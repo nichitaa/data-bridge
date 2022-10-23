@@ -2,6 +2,7 @@ import {
   alpha,
   createTheme,
   CssBaseline,
+  darken,
   GlobalStyles,
   inputBaseClasses,
   outlinedInputClasses,
@@ -43,6 +44,7 @@ const darkTheme = createTheme({
     },
     background: {
       default: '#030913',
+      paper: darken('#030913', 0.4),
     },
   },
   components: {

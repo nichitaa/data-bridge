@@ -19,14 +19,14 @@ export const usePanelResize = (params: Params) => {
 
   const animationRequestRef = useRef<number>(undefined!);
 
-  const maximizePanel = (maxWidth: number) => {
+  const maximizePanel = (maxWidth: number, step = 100) => {
     resetMax();
 
     const animationStepFn = () => {
       setSize((prev) => {
         if (prev <= maxWidth) {
-          // 100 - step (increase to adjust animation speed)
-          prev += 100;
+          // step (increase to adjust animation speed)
+          prev += step;
           animationRequestRef.current =
             window.requestAnimationFrame(animationStepFn);
           return prev;

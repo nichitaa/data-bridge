@@ -21,7 +21,7 @@ const DocumentationsPanel = (props: MainProps) => {
     minSizeAtom: documentationPanelMinSizeAtom,
   });
 
-  const handleMaximizePanel = () => maximizePanel(600);
+  const handleMaximizePanel = () => maximizePanel(600, 200);
 
   if (props.dimensions.width <= 35) {
     return (
