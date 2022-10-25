@@ -7,6 +7,9 @@ import { useJwtAuth } from './hooks/use-jwt-auth';
 const App = () => {
   const authStatus = useRecoilValue(authorizationStatusAtom);
   useJwtAuth();
+
+  if (!authStatus.initialized) return null;
+
   return (
     <AppRouter routes={routes} isAuth={authStatus.authorized}>
       <Routes />

@@ -1,12 +1,12 @@
 import { IRoutesConfig } from 'auth-react-router';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useJwtAuth } from './hooks/use-jwt-auth';
 import LoginPage from './pages/login-page';
 import DashboardPage from './pages/dashboard/dashboard-page';
 import Header from './shared/header';
 import { useRecoilValue } from 'recoil';
 import { authorizationStatusAtom } from './recoil/atoms';
+import HomePage from './pages/home/home-page';
 
 const PrivatePagesOutlet = () => {
   return (
@@ -52,6 +52,10 @@ export const routes: IRoutesConfig = {
       children: [
         {
           index: true,
+          component: <HomePage />,
+        },
+        {
+          path: ':workspaceId',
           component: <DashboardPage />,
         },
       ],

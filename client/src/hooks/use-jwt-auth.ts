@@ -15,17 +15,16 @@ export const useJwtAuth = () => {
   const resetJWT = useResetRecoilState(jwtAtom);
 
   useEffect(() => {
-    setAuthStatus((prev) => ({ ...prev, loading: true }));
-
     if (jwt) {
       const decoded = jwt_decode(jwt) as any;
       const exp = dayjs(decoded.exp * 1000);
       if (dayjs().isSameOrAfter(exp)) {
         // logout
-        setAuthStatus({
+        setAuthStatus((prev) => ({
+          ...prev,
           loading: false,
           authorized: false,
-        });
+        }));
         notificationService.notify({
           variant: TOAST_VARIANT.warning,
           message: 'Expired token, please login again',
@@ -34,12 +33,14 @@ export const useJwtAuth = () => {
         resetJWT();
       } else {
         // automatically login
-        setAuthStatus({
+        setAuthStatus((prev) => ({
+          ...prev,
           loading: false,
           authorized: true,
-        });
+        }));
       }
     }
+    setAuthStatus((prev) => ({ ...prev, initialized: true }));
   }, []);
 };
 
@@ -56,7 +57,7 @@ export const useAuthHandlers = () => {
     const response = await authService.login(credentials);
     if (response.success) {
       setJWT(response.data.token);
-      setAuthStatus({ authorized: true, loading: false });
+      setAuthStatus((prev) => ({ ...prev, authorized: true, loading: false }));
       notificationService.notify({
         variant: TOAST_VARIANT.success,
         message: 'successfully logged in',
@@ -99,7 +100,7 @@ export const useAuthHandlers = () => {
   };
 
   const handleLogout = () => {
-    setAuthStatus({ authorized: false, loading: false });
+    setAuthStatus((prev) => ({ ...prev, authorized: false, loading: false }));
     resetJWT();
     notificationService.notify({
       variant: TOAST_VARIANT.warning,

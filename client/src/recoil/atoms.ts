@@ -32,6 +32,8 @@ export const jwtAtom = atom<string | undefined>({
 export const authorizationStatusAtom = atom({
   key: 'authorizationStatusAtom',
   default: {
+    /** will fetch token from localstorage first */
+    initialized: false,
     loading: false,
     authorized: false,
   },
