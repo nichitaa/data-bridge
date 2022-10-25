@@ -13,6 +13,7 @@ services:
       # will load config from `gateway/config/prod.exs`
       MIX_ENV: prod
     depends_on:
+      - ms-sql-server
       - auth_service
 
   # Client Application
@@ -29,10 +30,11 @@ services:
   # Auth Service API
   auth_service:
     container_name: auth_service
-    hostname: auth_service
     image: nicolaedockerid/authservice
     ports:
       - '8080:80'
+    depends_on:
+      - ms-sql-server
 
   # MSSQL instance (for Auth Service)
   ms-sql-server:
