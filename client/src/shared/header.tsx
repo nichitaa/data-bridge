@@ -12,8 +12,9 @@ import {
   Typography,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState, MouseEvent } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useAuthHandlers } from '../hooks/use-jwt-auth';
+import CurrentWorkspaceSelect from './current-workspace-select';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -52,9 +53,7 @@ const Header = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant='h6' color='inherit' component='div'>
-            dbruh
-          </Typography>
+          <CurrentWorkspaceSelect />
         </Box>
         <IconButton onClick={handleMenuOpen}>
           <Avatar sx={{ maxWidth: 24, height: 24 }}>N</Avatar>

@@ -5,7 +5,7 @@ import LoginPage from './pages/login-page';
 import WorkspacePage from './pages/workspace/workspace-page';
 import Header from './shared/header';
 import { useRecoilValue } from 'recoil';
-import { authorizationStatusAtom } from './recoil/atoms';
+import { allWorkspacesAtom, authorizationStatusAtom } from './recoil/atoms';
 
 const PrivatePagesOutlet = () => {
   return (
@@ -36,10 +36,11 @@ const CheckAuthPage = () => {
 
 const RedirectToWorkspacePage = () => {
   // TODO: fetch all workspaces and redirect to first one
+  const allWorkspaces = useRecoilValue(allWorkspacesAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate('/workspace/0000-0000-0000-0001');
+    navigate(`/workspace/${allWorkspaces[0].id}`);
   }, []);
 
   return null;

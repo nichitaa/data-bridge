@@ -2,6 +2,7 @@ import { atom } from 'recoil';
 import { Channel, Socket } from 'phoenix';
 import { config } from '../config/config';
 import { localStorageEffect } from './effects';
+import { Workspace } from './types';
 
 export enum PhxSocketStatus {
   UNINSTANTIATED = 'UNINSTANTIATED',
@@ -25,7 +26,25 @@ export const socketStatusAtom = atom<PhxSocketStatus>({
 export const workspaceChannelAtom = atom<undefined | Channel>({
   key: 'workspaceChannelAtom',
   default: undefined,
-  dangerouslyAllowMutability: true
+  dangerouslyAllowMutability: true,
+});
+
+export const allWorkspacesAtom = atom<Workspace[]>({
+  key: 'allWorkspacesAtom',
+  default: [
+    {
+      name: 'aws-workspace',
+      id: '0000-0000-0000-0001',
+    },
+    {
+      name: 'azure-workspace',
+      id: '0000-0000-0000-0002',
+    },
+    {
+      name: 'grafana',
+      id: '0000-0000-0000-0003',
+    },
+  ],
 });
 
 // Authorization
