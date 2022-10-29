@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { Socket } from 'phoenix';
+import { Channel, Socket } from 'phoenix';
 import { config } from '../config/config';
 import { localStorageEffect } from './effects';
 
@@ -12,14 +12,20 @@ export enum PhxSocketStatus {
 }
 
 export const socketAtom = atom<Socket | undefined>({
-  dangerouslyAllowMutability: true,
   key: 'socketAtom',
   default: new Socket(`${config.gatewayWSBaseUrl}/socket`),
+  dangerouslyAllowMutability: true,
 });
 
 export const socketStatusAtom = atom<PhxSocketStatus>({
   key: 'socketStatusAtom',
   default: PhxSocketStatus.UNINSTANTIATED,
+});
+
+export const workspaceChannelAtom = atom<undefined | Channel>({
+  key: 'workspaceChannelAtom',
+  default: undefined,
+  dangerouslyAllowMutability: true
 });
 
 // Authorization
