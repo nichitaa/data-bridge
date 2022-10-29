@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import LoginPage from './pages/login-page';
 import WorkspacePage from './pages/workspace/workspace-page';
-import Header from './shared/header';
+import Header from './shared/header/header';
 import { useRecoilValue } from 'recoil';
 import { allWorkspacesAtom, authorizationStatusAtom } from './recoil/atoms';
 

@@ -64,6 +64,13 @@ export const authorizationStatusAtom = atom({
   },
 });
 
+export const currentUserAtom = atom<
+  { username: string; userId: string } | undefined
+>({
+  key: 'currentUserAtom',
+  default: undefined,
+});
+
 /** UI */
 /** react-reflex mutates some props, therefore could not use a single atom with object as value */
 

@@ -2,7 +2,7 @@ import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { allWorkspacesAtom } from '../recoil/atoms';
+import { allWorkspacesAtom } from '../../recoil/atoms';
 
 const CurrentWorkspaceSelect = () => {
   const allWorkspaces = useRecoilValue(allWorkspacesAtom);

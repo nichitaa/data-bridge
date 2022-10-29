@@ -1,6 +1,6 @@
 import { alpha, Box, Grid, TextField, Typography } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { useState } from 'react';
+import { KeyboardEventHandler, useState } from 'react';
 import { useAuthHandlers } from '../hooks/use-jwt-auth';
 
 const LoginPage = () => {
@@ -16,6 +16,12 @@ const LoginPage = () => {
 
   const handleRegister = async () => {
     const success = await register(credentials);
+  };
+
+  const handleOnKeyDown: KeyboardEventHandler = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
   };
 
   return (
@@ -51,6 +57,7 @@ const LoginPage = () => {
           onChange={(e) =>
             setCredentials((prev) => ({ ...prev, username: e.target.value }))
           }
+          onKeyDown={handleOnKeyDown}
           placeholder='username'
           autoComplete={'off'}
         />
@@ -61,6 +68,7 @@ const LoginPage = () => {
           onChange={(e) =>
             setCredentials((prev) => ({ ...prev, password: e.target.value }))
           }
+          onKeyDown={handleOnKeyDown}
           placeholder='password'
           autoComplete={'off'}
         />

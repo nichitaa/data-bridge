@@ -5,11 +5,14 @@ interface AuthServiceAPI {
   login: (payload: {
     username: string;
     password: string;
-  }) => Promise<APIResponse<{ token: string; username: string }>>;
+  }) => Promise<APIResponse<{ token: string; userName: string }>>;
   register: (payload: {
     username: string;
     password: string;
-  }) => Promise<APIResponse<{ token: string; username: string }>>;
+  }) => Promise<APIResponse<{ token: string; userName: string }>>;
+  getSelf: (
+    jwt: string
+  ) => Promise<APIResponse<{ userName: string; userId: string }>>;
 }
 
 export class AuthService implements AuthServiceAPI {
@@ -38,6 +41,16 @@ export class AuthService implements AuthServiceAPI {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: { 'content-type': 'application/json' },
+    }).then((res) => res.json());
+  };
+
+  public getSelf: AuthServiceAPI['getSelf'] = async (jwt) => {
+    return await fetch(`${this.baseUrl}/self`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${jwt}`,
+      },
     }).then((res) => res.json());
   };
 }
