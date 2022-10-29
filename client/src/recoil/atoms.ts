@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 import { Channel, Socket } from 'phoenix';
 import { config } from '../config/config';
 import { localStorageEffect } from './effects';
-import { Workspace } from './types';
+import { CurrentWorkspaceUserPresence, Workspace } from './types';
 
 export enum PhxSocketStatus {
   UNINSTANTIATED = 'UNINSTANTIATED',
@@ -104,4 +104,11 @@ export const documentationPanelMinSizeAtom = atom({
 export const documentationPanelMaxSizeAtom = atom({
   key: 'documentationPanelMaxSizeAtom',
   default: 700,
+});
+
+// Current active users within a workspace
+export const currentActiveUsersAtom = atom<CurrentWorkspaceUserPresence[]>({
+  key: 'currentActiveUsersAtom',
+  default: [],
+  dangerouslyAllowMutability: true,
 });

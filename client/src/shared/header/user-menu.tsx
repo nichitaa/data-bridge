@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserAtom, jwtAtom } from '../../recoil/atoms';
 import {
   Avatar,
+  Box,
   IconButton,
   Menu,
   menuClasses,
@@ -51,9 +52,15 @@ const UserMenu = () => {
   };
 
   return (
-    <>
+    <Box sx={{ paddingLeft: '15px' }}>
       <IconButton onClick={handleMenuOpen}>
-        <Avatar sx={{ maxWidth: 24, height: 24 }}>
+        <Avatar
+          sx={{
+            maxWidth: 24,
+            height: 24,
+            backgroundColor: (theme) => theme.palette.primary.main,
+          }}
+        >
           {currentUser?.username[0]}
         </Avatar>
       </IconButton>
@@ -77,7 +84,7 @@ const UserMenu = () => {
           </Typography>
         </MenuItem>
       </StyledMenu>
-    </>
+    </Box>
   );
 };
 

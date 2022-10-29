@@ -3,6 +3,7 @@ import {
   collectionsPanelMaxSizeAtom,
   collectionsPanelMinSizeAtom,
   collectionsPanelSizeAtom,
+  currentActiveUsersAtom,
   documentationPanelMaxSizeAtom,
   documentationPanelMinSizeAtom,
   documentationPanelSizeAtom,
@@ -24,8 +25,8 @@ import { styled } from '@mui/styles';
 import { alpha, Box, BoxProps, generateUtilityClasses } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { usePhoenixChannel } from '../../../../hooks/use-phoenix-channel';
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { usePhxPresence } from '../../../../hooks/use-phx-presence';
 
 const workspacePageClasses = generateUtilityClasses('WorkspacePage', [
@@ -43,7 +44,7 @@ const WorkspaceView = () => {
     recoilAtom: workspaceChannelAtom,
   });
   const channel = useRecoilValue(workspaceChannelAtom);
-  const [currentActiveUsers, setCurrentActiveUsers] = useState([]);
+  const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);
 
   const {

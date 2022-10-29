@@ -2,6 +2,7 @@ import { AppBar, Box, darken, IconButton, Toolbar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CurrentWorkspaceSelect from './current-workspace-select';
 import UserMenu from './user-menu';
+import ActiveUsersAvatars from './active-users-avatars';
 
 const Header = () => {
   return (
@@ -30,7 +31,10 @@ const Header = () => {
           </IconButton>
           <CurrentWorkspaceSelect />
         </Box>
-        <UserMenu />
+        <Box sx={{ display: 'flex' }}>
+          <ActiveUsersAvatars />
+          <UserMenu />
+        </Box>
       </Toolbar>
     </AppBar>
   );
