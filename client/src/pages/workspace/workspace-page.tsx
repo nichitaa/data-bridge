@@ -22,14 +22,14 @@ import EditorPanel from './components/editor-panel/editor-panel';
 import EditorPanelHeader from './components/editor-panel/editor-panel-header';
 import ResultPanelHeader from './components/query-result-panel/result-panel-header';
 
-const dashboardPageClasses = generateUtilityClasses('DashboardPage', [
+const workspacePageClasses = generateUtilityClasses('WorkspacePage', [
   'horizontalHandler',
   'splitter',
 ]);
 
-const cls = dashboardPageClasses;
+const cls = workspacePageClasses;
 
-const DashboardPage = () => {
+const WorkspacePage = () => {
   const {
     size: collectionsSize,
     min: collectionsMinSize,
@@ -54,7 +54,7 @@ const DashboardPage = () => {
   });
 
   return (
-    <StyledDashboardPage>
+    <StyledWorkspacePage>
       <ReflexContainer orientation={'vertical'}>
         <ReflexElement
           propagateDimensions
@@ -120,11 +120,11 @@ const DashboardPage = () => {
           <DocumentationsPanel />
         </ReflexElement>
       </ReflexContainer>
-    </StyledDashboardPage>
+    </StyledWorkspacePage>
   );
 };
 
-const StyledDashboardPage = styled(Box)<BoxProps>(({ theme }) => ({
+const StyledWorkspacePage = styled(Box)<BoxProps>(({ theme }) => ({
   height: `calc(100vh - 48px)`,
   [`& .${cls.horizontalHandler}`]: {
     cursor: 'row-resize!important',
@@ -138,4 +138,4 @@ const StyledDashboardPage = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-export default DashboardPage;
+export default WorkspacePage;
