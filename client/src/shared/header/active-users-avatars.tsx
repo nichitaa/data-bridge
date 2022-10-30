@@ -9,8 +9,8 @@ const ActiveUsersAvatars = () => {
 
   return (
     <StyledActiveUsersAvatars
-      // !== 1 excluding self presence
-      showBorder={currentActiveUsers.length !== 1}
+      // > 1 excluding self presence
+      showBorder={currentActiveUsers.length > 1}
     >
       {currentActiveUsers.map((user) => {
         const { metas } = user;

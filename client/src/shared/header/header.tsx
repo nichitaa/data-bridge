@@ -1,8 +1,8 @@
-import { AppBar, Box, darken, IconButton, Toolbar } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Box, darken, Toolbar } from '@mui/material';
 import CurrentWorkspaceSelect from './current-workspace-select';
 import UserMenu from './user-menu';
 import ActiveUsersAvatars from './active-users-avatars';
+import WorkspaceMenu from './workspace-menu';
 
 const Header = () => {
   return (
@@ -21,14 +21,7 @@ const Header = () => {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton
-            edge='start'
-            color='inherit'
-            aria-label='menu'
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <WorkspaceMenu />
           <CurrentWorkspaceSelect />
         </Box>
         <Box sx={{ display: 'flex' }}>

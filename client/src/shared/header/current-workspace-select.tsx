@@ -1,4 +1,9 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import {
+  menuClasses,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -16,7 +21,21 @@ const CurrentWorkspaceSelect = () => {
   };
 
   return (
-    <Select value={currentWorkspace} onChange={handleOnChange} size={'small'}>
+    <Select
+      value={currentWorkspace}
+      onChange={handleOnChange}
+      size={'small'}
+      MenuProps={{
+        PaperProps: {
+          sx: {
+            [`& .${menuClasses.list}`]: {
+              paddingTop: 0,
+              paddingBottom: 0,
+            },
+          },
+        },
+      }}
+    >
       {allWorkspaces.map((w) => (
         <MenuItem key={w.id} value={w.id}>
           {w.name}

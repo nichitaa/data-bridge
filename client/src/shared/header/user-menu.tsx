@@ -88,7 +88,7 @@ const UserMenu = () => {
   );
 };
 
-const StyledMenu = styled(Menu)(({ theme }) => ({
+export const StyledMenu = styled(Menu)(({ theme }) => ({
   [`& .${menuClasses.list}`]: {
     padding: 0,
   },

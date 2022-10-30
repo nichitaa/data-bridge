@@ -112,3 +112,17 @@ export const currentActiveUsersAtom = atom<CurrentWorkspaceUserPresence[]>({
   default: [],
   dangerouslyAllowMutability: true,
 });
+
+export const allWorkspaceCollaboratorsAtom = atom({
+  key: 'allWorkspaceCollaboratorsAtom',
+  default: [
+    {
+      username: 'John',
+      userId: '1234-1234-1234-0000',
+    },
+    {
+      username: 'George',
+      userId: '1234-1234-1234-0001',
+    },
+  ],
+});
