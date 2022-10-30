@@ -4,7 +4,7 @@ defmodule GatewayWeb.WorkspaceChannel do
 
   def join("workspace:" <> workspace_id, params, socket) do
     user_id = socket.assigns.user_id
-    dbg("user: #{user_id}, joining workspace: #{workspace_id}")
+    dbg("[wp] join user: #{user_id}, workspace_id: #{workspace_id}")
     # TODO: check if this user could join this workspace
     socket = assign(socket, :workspace_id, workspace_id)
     send(self(), :after_join)
@@ -21,7 +21,7 @@ defmodule GatewayWeb.WorkspaceChannel do
 
   def handle_info(:after_join, socket) do
     dbg(
-      "after_join track presence for user_id: #{socket.assigns.user_id} and workspace_id: #{socket.assigns.workspace_id}"
+      "[wp] after_join track presence for user_id: #{socket.assigns.user_id} and workspace_id: #{socket.assigns.workspace_id}"
     )
 
     {:ok, _} =
@@ -37,7 +37,7 @@ defmodule GatewayWeb.WorkspaceChannel do
   end
 
   def terminate(reason, socket) do
-    dbg("[terminate] reason=#{inspect(reason)}")
+    dbg("[wp]-[terminate] reason=#{inspect(reason)}")
     :ok
   end
 end

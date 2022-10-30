@@ -3,6 +3,7 @@ defmodule GatewayWeb.WorkspaceSocket do
   alias GatewayWeb.Services
 
   channel "workspace:*", GatewayWeb.WorkspaceChannel
+  channel "query:*", GatewayWeb.QueryChannel
 
   def connect(%{"jwt" => jwt}, socket, connect_info) do
     socket = assign(socket, :jwt, jwt)
@@ -12,7 +13,7 @@ defmodule GatewayWeb.WorkspaceSocket do
       |> Services.Auth.client()
       |> Services.Auth.get_self()
 
-    dbg("connect to workspace:* user_data: #{inspect(user_data)}")
+    dbg("new connection - user_data: #{inspect(user_data)}")
 
     socket = assign(socket, :user_id, user_data["userId"])
     socket = assign(socket, :user_name, user_data["userName"])
