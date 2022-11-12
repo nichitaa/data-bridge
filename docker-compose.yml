@@ -15,6 +15,8 @@ services:
     depends_on:
       - ms-sql-server
       - auth_service
+      - main_api
+      - postgres_image
 
   # Client Application
   react_client:
@@ -45,3 +47,24 @@ services:
       MSSQL_PID: EXPRESS
     ports:
       - '1433:1433'
+
+  # Main API
+  main_api:
+    container_name: main_api
+    image: dpuscas/teza-fuf
+    ports:
+      - "8081:80"
+    depends_on:
+      - "postgres_image"
+   
+  # Postgres instance (for Main API)
+  postgres_image:
+    image: postgres:latest
+    ports:
+      - "5432"
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "191993acces"
+      POSTGRES_DB: "MainDb"
+    
