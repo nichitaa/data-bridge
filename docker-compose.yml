@@ -23,6 +23,10 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
+  connectore-service:
+    image: nicolaedockerid/connectorservice
+    ports:
+      - 8081:80
   auth-service:
     image: nicolaedockerid/authservice
     ports:
