@@ -8,6 +8,13 @@ defmodule GatewayWeb.Router do
   scope "/api", GatewayWeb do
     pipe_through :api
     get "/health_check/env", HealthCheckController, :get_env
+
+    # Authorization service routes
+    scope "/auth" do
+      post "/register", AuthController, :register
+      post "/login", AuthController, :login
+      get "/self", AuthController, :get_self
+    end
   end
 
   if Mix.env() in [:dev, :test] do
