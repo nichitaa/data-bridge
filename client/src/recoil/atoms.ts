@@ -31,20 +31,7 @@ export const workspaceChannelAtom = atom<undefined | Channel>({
 
 export const allWorkspacesAtom = atom<Workspace[]>({
   key: 'allWorkspacesAtom',
-  default: [
-    {
-      name: 'aws-workspace',
-      id: '0000-0000-0000-0001',
-    },
-    {
-      name: 'azure-workspace',
-      id: '0000-0000-0000-0002',
-    },
-    {
-      name: 'grafana',
-      id: '0000-0000-0000-0003',
-    },
-  ],
+  default: [],
 });
 
 // Authorization

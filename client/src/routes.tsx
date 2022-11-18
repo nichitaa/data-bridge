@@ -5,9 +5,11 @@ import LoginPage from './pages/login-page';
 import WorkspacePage from './pages/workspace/workspace-page';
 import Header from './shared/header/header';
 import { useRecoilValue } from 'recoil';
-import { allWorkspacesAtom, authorizationStatusAtom } from './recoil/atoms';
+import { authorizationStatusAtom } from './recoil/atoms';
+import { useInitFetchAllWorkspaces } from './hooks/use-init-fetch-all-workspaces';
 
 const PrivatePagesOutlet = () => {
+  useInitFetchAllWorkspaces();
   return (
     <>
       <Header />
@@ -35,15 +37,16 @@ const CheckAuthPage = () => {
 };
 
 const RedirectToWorkspacePage = () => {
-  // TODO: fetch all workspaces and redirect to first one
-  const allWorkspaces = useRecoilValue(allWorkspacesAtom);
   const navigate = useNavigate();
+  const allWorkspaces = useInitFetchAllWorkspaces();
 
   useEffect(() => {
-    navigate(`/workspace/${allWorkspaces[0].id}`);
-  }, []);
+    if (allWorkspaces?.[0]?.id) {
+      navigate(`/workspace/${allWorkspaces?.[0]?.id}`);
+    }
+  }, [allWorkspaces]);
 
-  return null;
+  return <>You can create a workspace at any time!</>;
 };
 
 export const routes: IRoutesConfig = {

@@ -26,6 +26,7 @@
     "auth-react-router": "^0.4.7",
     "dayjs": "^1.11.5",
     "jwt-decode": "^3.1.2",
+    "observable-hooks": "^4.2.1",
     "phoenix": "^1.6.13",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -37,7 +38,8 @@
     "recoil": "^0.7.5",
     "rehype-sanitize": "^5.0.1",
     "rxjs": "^7.5.7",
-    "rxjs-hooks": "^0.8.0-alpha.0"
+    "rxjs-hooks": "^0.8.0-alpha.0",
+    "rxjs-exhaustmap-with-trailing": "^2.1.0"
   },
   "devDependencies": {
     "@types/phoenix": "^1.5.4",

@@ -4,25 +4,22 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { allWorkspacesAtom } from '../../recoil/atoms';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useInitFetchAllWorkspaces } from '../../hooks/use-init-fetch-all-workspaces';
 
 const CurrentWorkspaceSelect = () => {
-  const allWorkspaces = useRecoilValue(allWorkspacesAtom);
+  const allWorkspaces = useInitFetchAllWorkspaces();
   const navigate = useNavigate();
-  const [currentWorkspace, setCurrentWorkspace] = useState(allWorkspaces[0].id);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   const handleOnChange = (event: SelectChangeEvent) => {
     const workspaceName = event.target.value as string;
-    setCurrentWorkspace(workspaceName);
     navigate(`/workspace/${workspaceName}`);
   };
 
   return (
     <Select
-      value={currentWorkspace}
+      value={workspaceId ?? ''}
       onChange={handleOnChange}
       size={'small'}
       MenuProps={{
