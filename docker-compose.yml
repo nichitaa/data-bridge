@@ -28,12 +28,12 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
-      
-  # Connectore Service API
+
+  # Connector Service API
   connector-service:
     image: nicolaedockerid/connectorservice
     ports:
-      - 8081:80
+      - '8082:80'
 
   # Auth Service API
   auth_service:
@@ -59,10 +59,10 @@ services:
     container_name: main_api
     image: dpuscas/teza-fuf
     ports:
-      - "8081:80"
+      - '8081:80'
     depends_on:
-      - "postgres_image"
-   
+      - postgres_image
+
   # Postgres instance (for Main API)
   postgres_image:
     image: postgres:latest

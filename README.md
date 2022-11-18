@@ -3,8 +3,13 @@
 ### _Docker stuff_
 
 ```shell
-$ # build and start all docker `services`
-$ docker compose up --build
+# build and start all docker `services`
+docker compose up --build
+
+# clean-up (powershell)
+docker rmi -f $(docker images -aq)
+docker rm -f $(docker ps -a -q)
+docker volume rm $(docker volume ls -q)
 ```
 
 ### _Configurations_
