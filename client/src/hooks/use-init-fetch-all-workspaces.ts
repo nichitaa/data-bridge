@@ -9,12 +9,11 @@ export const useInitFetchAllWorkspaces = () => {
 
   useEffect(() => {
     (async () => {
-      if (jwt && allWorkspaces.length === 0) {
+      // fetched once
+      if (jwt && allWorkspaces === undefined) {
         const response = await mainService.listWorkspaces(jwt);
         if (response.success) {
-          if (response.data.length > 0) {
-            setAllWorkspaces(response.data);
-          }
+          setAllWorkspaces(response.data);
         } else {
           notificationService.notify({
             variant: 'error',
@@ -25,6 +24,4 @@ export const useInitFetchAllWorkspaces = () => {
       }
     })();
   }, [jwt, allWorkspaces]);
-
-  return allWorkspaces;
 };

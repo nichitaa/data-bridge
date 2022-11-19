@@ -4,8 +4,10 @@ import { MouseEvent, useState } from 'react';
 import { StyledMenu } from './user-menu';
 import WorkspaceDialog from './workspace-dialog';
 import EditTeamDialog from './edit-team-dialog';
+import { useParams } from 'react-router-dom';
 
 const WorkspaceMenu = () => {
+  const { workspaceId } = useParams<{ workspaceId: string }>();
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openTeamDialog, setOpenTeamDialog] = useState(false);
@@ -58,16 +60,20 @@ const WorkspaceMenu = () => {
             Create workspace
           </Typography>
         </MenuItem>
-        <MenuItem onClick={handleOpenEditDialog}>
-          <Typography component={'div'} fontSize={'14px'} textAlign='center'>
-            Edit workspace
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handleOpenTeamDialog}>
-          <Typography component={'div'} fontSize={'14px'} textAlign='center'>
-            Edit team
-          </Typography>
-        </MenuItem>
+        {workspaceId !== undefined && (
+          <MenuItem onClick={handleOpenEditDialog}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Edit workspace
+            </Typography>
+          </MenuItem>
+        )}
+        {workspaceId !== undefined && (
+          <MenuItem onClick={handleOpenTeamDialog}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Edit team
+            </Typography>
+          </MenuItem>
+        )}
       </StyledMenu>
       {/* Dialogs */}
       <WorkspaceDialog

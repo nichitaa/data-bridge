@@ -29,9 +29,9 @@ export const workspaceChannelAtom = atom<undefined | Channel>({
   dangerouslyAllowMutability: true,
 });
 
-export const allWorkspacesAtom = atom<Workspace[]>({
+export const allWorkspacesAtom = atom<Workspace[] | undefined>({
   key: 'allWorkspacesAtom',
-  default: [],
+  default: undefined,
 });
 
 // Authorization
@@ -112,4 +112,9 @@ export const allWorkspaceCollaboratorsAtom = atom({
       userId: '1234-1234-1234-0001',
     },
   ],
+});
+
+export const workspaceInfoAtom = atom<any>({
+  key: 'workspaceInfoAtom',
+  default: undefined,
 });

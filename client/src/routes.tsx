@@ -2,10 +2,10 @@ import { IRoutesConfig } from 'auth-react-router';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import LoginPage from './pages/login-page';
-import WorkspacePage from './pages/workspace/workspace-page';
+import { CheckWorkspacePage } from './pages/workspace/workspace-page';
 import Header from './shared/header/header';
 import { useRecoilValue } from 'recoil';
-import { authorizationStatusAtom } from './recoil/atoms';
+import { allWorkspacesAtom, authorizationStatusAtom } from './recoil/atoms';
 import { useInitFetchAllWorkspaces } from './hooks/use-init-fetch-all-workspaces';
 
 const PrivatePagesOutlet = () => {
@@ -38,7 +38,7 @@ const CheckAuthPage = () => {
 
 const RedirectToWorkspacePage = () => {
   const navigate = useNavigate();
-  const allWorkspaces = useInitFetchAllWorkspaces();
+  const allWorkspaces = useRecoilValue(allWorkspacesAtom);
 
   useEffect(() => {
     if (allWorkspaces?.[0]?.id) {
@@ -46,7 +46,7 @@ const RedirectToWorkspacePage = () => {
     }
   }, [allWorkspaces]);
 
-  return <>You can create a workspace at any time!</>;
+  return null;
 };
 
 export const routes: IRoutesConfig = {
@@ -70,7 +70,7 @@ export const routes: IRoutesConfig = {
         },
         {
           path: ':workspaceId',
-          component: <WorkspacePage />,
+          component: <CheckWorkspacePage />,
         },
       ],
     },

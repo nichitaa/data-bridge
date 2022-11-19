@@ -1,6 +1,7 @@
 defmodule GatewayWeb.WorkspaceChannel do
   use Phoenix.Channel, hibernate_after: :infinity
   alias GatewayWeb.WorkspacePresence
+  alias GatewayWeb.Services.MainApi
 
   def join("workspace:" <> workspace_id, params, socket) do
     user_id = socket.assigns.user_id
@@ -8,6 +9,7 @@ defmodule GatewayWeb.WorkspaceChannel do
     # TODO: check if this user could join this workspace
     socket = assign(socket, :workspace_id, workspace_id)
     send(self(), :after_join)
+    send(self(), :workspace_info)
     {:ok, %{success: true}, socket}
   end
 
@@ -19,6 +21,22 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, %{success: true, data: "from event_name reply"}}, socket}
   end
 
+  def handle_info(:workspace_info, socket) do
+    dbg("[wp] workspace_info")
+    id = socket.assigns.workspace_id
+
+    response =
+      socket.assigns.jwt
+      |> MainApi.client()
+      |> MainApi.get_workspace_by_id(id)
+
+    dbg(response)
+    push(socket, "workspace_info", response)
+
+    {:noreply, socket}
+  end
+
+  # Presence update after join
   def handle_info(:after_join, socket) do
     dbg(
       "[wp] after_join track presence for user_id: #{socket.assigns.user_id} and workspace_id: #{socket.assigns.workspace_id}"
