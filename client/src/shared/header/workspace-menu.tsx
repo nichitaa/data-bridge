@@ -89,7 +89,6 @@ const WorkspaceMenu = () => {
           onClose: handleCloseEditDialog,
         }}
         type={'edit'}
-        connectionString={'test connection string'}
       />
       <EditTeamDialog
         dialogProps={{

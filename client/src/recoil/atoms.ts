@@ -2,7 +2,11 @@ import { atom } from 'recoil';
 import { Channel, Socket } from 'phoenix';
 import { config } from '../config/config';
 import { localStorageEffect } from './effects';
-import { CurrentWorkspaceUserPresence, Workspace } from './types';
+import {
+  CurrentWorkspaceUserPresence,
+  Workspace,
+  WorkspaceInfo,
+} from './types';
 
 export enum PhxSocketStatus {
   UNINSTANTIATED = 'UNINSTANTIATED',
@@ -114,7 +118,7 @@ export const allWorkspaceCollaboratorsAtom = atom({
   ],
 });
 
-export const workspaceInfoAtom = atom<any>({
-  key: 'workspaceInfoAtom',
+export const currentWorkspaceInfoAtom = atom<undefined | WorkspaceInfo>({
+  key: 'currentWorkspaceInfoAtom',
   default: undefined,
 });

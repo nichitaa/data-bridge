@@ -8,7 +8,7 @@ import {
   documentationPanelMinSizeAtom,
   documentationPanelSizeAtom,
   workspaceChannelAtom,
-  workspaceInfoAtom,
+  currentWorkspaceInfoAtom,
 } from '../../../../recoil/atoms';
 import {
   ReflexContainer,
@@ -44,7 +44,7 @@ const WorkspaceView = () => {
     subtopic: workspaceId,
     recoilAtom: workspaceChannelAtom,
   });
-  const [workspaceInfo, setWorkspaceInfo] = useRecoilState(workspaceInfoAtom);
+  const [workspaceInfo, setWorkspaceInfo] = useRecoilState(currentWorkspaceInfoAtom);
   const channel = useRecoilValue(workspaceChannelAtom);
   const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);

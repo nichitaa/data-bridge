@@ -18,7 +18,8 @@ const CurrentWorkspaceSelect = () => {
     navigate(`/workspace/${workspaceName}`);
   };
 
-  if (allWorkspaces?.length === 0) return <>No workspaces</>;
+  if (allWorkspaces === undefined || allWorkspaces?.length === 0)
+    return <>No workspaces</>;
   return (
     <Select
       value={workspaceId ?? ''}

@@ -24,6 +24,10 @@ defmodule GatewayWeb.Router do
       patch "/workspace/:workspace_id", MainApiController, :update_workspace_by_id
       post "/workspace/:workspace_id/collaborator/:collaborator_id", MainApiController, :add_collaborator
     end
+
+    scope "/db" do
+      post "/test_connection", DbApiController, :test_connection
+    end
   end
 
   if Mix.env() in [:dev, :test] do

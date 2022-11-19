@@ -4,7 +4,8 @@ import Config
 # General configs
 config :gateway,
   auth_service_base_url: "http://localhost:8080",
-  main_api_service_base_url: "http://localhost:8081"
+  main_api_service_base_url: "http://localhost:8081",
+  db_api_service_base_url: "http://localhost:8082"
 
 # Configures the endpoint
 config :gateway, GatewayWeb.Endpoint,
