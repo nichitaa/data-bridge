@@ -4,6 +4,8 @@ import { config } from '../config/config';
 import { localStorageEffect } from './effects';
 import {
   CurrentWorkspaceUserPresence,
+  QueryInfo,
+  QueryResult,
   Workspace,
   WorkspaceInfo,
 } from './types';
@@ -120,5 +122,20 @@ export const allWorkspaceCollaboratorsAtom = atom({
 
 export const currentWorkspaceInfoAtom = atom<undefined | WorkspaceInfo>({
   key: 'currentWorkspaceInfoAtom',
+  default: undefined,
+});
+
+export const currentSelectedQueryDataAtom = atom<undefined | QueryInfo>({
+  key: 'currentSelectedQueryDataAtom',
+  default: undefined,
+});
+
+export const currentSqlQueryAtom = atom<string>({
+  key: 'currentSqlQueryAtom',
+  default: '',
+});
+
+export const currentQueryResultsAtom = atom<undefined | QueryResult>({
+  key: 'currentQueryResultsAtom',
   default: undefined,
 });

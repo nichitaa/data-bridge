@@ -4,11 +4,11 @@ import {
   collectionsPanelMinSizeAtom,
   collectionsPanelSizeAtom,
   currentActiveUsersAtom,
+  currentWorkspaceInfoAtom,
   documentationPanelMaxSizeAtom,
   documentationPanelMinSizeAtom,
   documentationPanelSizeAtom,
   workspaceChannelAtom,
-  currentWorkspaceInfoAtom,
 } from '../../../../recoil/atoms';
 import {
   ReflexContainer,
@@ -44,7 +44,9 @@ const WorkspaceView = () => {
     subtopic: workspaceId,
     recoilAtom: workspaceChannelAtom,
   });
-  const [workspaceInfo, setWorkspaceInfo] = useRecoilState(currentWorkspaceInfoAtom);
+  const [workspaceInfo, setWorkspaceInfo] = useRecoilState(
+    currentWorkspaceInfoAtom
+  );
   const channel = useRecoilValue(workspaceChannelAtom);
   const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);
@@ -75,30 +77,14 @@ const WorkspaceView = () => {
   /** subscribe to channel emissions */
   useEffect(() => {
     if (channel !== undefined) {
-      console.log('channel changed and is: ', channel);
-      // const subscriptionRef = channel.on('from_server', (payload) => {
-      //   console.log('[from_server] received: ', payload);
-      // });
       channel.on('workspace_info', (payload) => {
         if (payload.success) {
-          console.log('wp_info: ', payload.data);
           setWorkspaceInfo(payload.data);
         }
       });
-
-      // send message to channel
-      // const pushInstance = channel.push('event_name', {});
-      // pushInstance
-      //   .receive('ok', (response) => {
-      //     console.log('[event_name] push ok: ', response);
-      //   })
-      //   .receive('error', (response) => {
-      //     console.log('[event_name] push error: ', response);
-      //   });
-
       return () => {
         // clean up subscriptions refs
-        channel.off('from_server');
+        channel.off('workspace_info');
       };
     }
   }, [channel]);

@@ -4,6 +4,14 @@ defmodule GatewayWeb.Services.DbApi do
     Tesla.post(client, "/api/Connector/VerifyDbConnection", payload) |> get_response_body()
   end
 
+  def run_query(client, payload) do
+    Tesla.post(client, "/api/Connector/ExecuteQuery", payload) |> get_response_body()
+  end
+
+  def format_query(client, payload) do
+    Tesla.post(client, "/api/Connector/FormatSqlQuery", payload) |> get_response_body()
+  end
+
   def client(token) do
     middleware = [
       Tesla.Middleware.Logger,

@@ -4,7 +4,6 @@ import {
   alpha,
   Box,
   BoxProps,
-  darken,
   IconButton,
   IconButtonProps,
   Menu,
@@ -22,15 +21,52 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { MouseEvent, MouseEventHandler, useState } from 'react';
+import AddDialog from '../../add-dialog/add-dialog';
+import { notificationService } from '../../../../../services';
+import { useRecoilValue } from 'recoil';
+import { workspaceChannelAtom } from '../../../../../recoil/atoms';
 
 interface MainProps extends DefaultNodeProps {}
 
 const CollectionTreeNode = (props: MainProps) => {
   const { node } = props;
+  const channel = useRecoilValue(workspaceChannelAtom);
+  const [openAddFolder, setOpenAddFolder] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const toggle: MouseEventHandler = (e) => {
     e.stopPropagation();
     treeHandlers.trees.collections.handlers.setOpen(node, !node.isSelected());
+  };
+
+  const handleAddFolder = (name: string, clearStateName: () => void) => {
+    if (name.trim() === '') {
+      return notificationService.notify({
+        message: 'Name could not be empty',
+        variant: 'error',
+        method: 'create_folder',
+      });
+    }
+    const collectionData = node.data;
+    channel
+      ?.push('create_folder', { name: name, collection_id: collectionData.id })
+      .receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            message: 'Folder created!',
+            variant: 'success',
+            method: 'create_folder',
+          });
+          setOpenAddFolder(false);
+          clearStateName();
+          handleMenuClose();
+        } else {
+          notificationService.notify({
+            message: 'Could not create folder!',
+            variant: 'error',
+            method: 'create_folder',
+          });
+        }
+      });
   };
 
   const handleMenuOpen = (event: MouseEvent<HTMLElement>) => {
@@ -41,67 +77,75 @@ const CollectionTreeNode = (props: MainProps) => {
     setAnchorEl(null);
   };
   return (
-    <StyledTreeNode
-      key={`${node.data.id}_${node.data.collection}`}
-      type={'collection'}
-    >
-      <Box className={'labelWrapper'} onClick={toggle}>
-        {node.options.opened ? (
-          <>
-            <StyledNodeIconButton onClick={toggle}>
-              <ExpandMoreIcon />
-            </StyledNodeIconButton>
-          </>
-        ) : (
-          <>
-            <StyledNodeIconButton onClick={toggle}>
-              <ExpandLessIcon />
-            </StyledNodeIconButton>
-          </>
-        )}
-        <StyledNodeTypography component={'div'}>
-          {node.data.collection} <code>[f={node.data.children.length}]</code>
-        </StyledNodeTypography>
-      </Box>
-      <StyledNodeIconButton onClick={handleMenuOpen}>
-        <MoreHorizIcon />
-      </StyledNodeIconButton>
-      <StyledTreeNodeMenu
+    <>
+      <StyledTreeNode
+        key={`${node.data.id}_${node.data.collection}`}
         type={'collection'}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
       >
-        <MenuItem onClick={() => {}}>
-          <Typography component={'div'}>Add folder</Typography>
-        </MenuItem>
-        <MenuItem onClick={() => {}}>
-          <Typography component={'div'}>Docs</Typography>
-        </MenuItem>
-        <MenuItem onClick={() => {}}>
-          <Typography component={'div'}>Rename</Typography>
-        </MenuItem>
-        <MenuItem onClick={() => {}}>
-          <Typography
-            component={'div'}
-            sx={{
-              color: (theme) => theme.palette.error.main,
-            }}
-          >
-            Delete
-          </Typography>
-        </MenuItem>
-      </StyledTreeNodeMenu>
-    </StyledTreeNode>
+        <Box className={'labelWrapper'} onClick={toggle}>
+          {node.options.opened ? (
+            <>
+              <StyledNodeIconButton onClick={toggle}>
+                <ExpandMoreIcon />
+              </StyledNodeIconButton>
+            </>
+          ) : (
+            <>
+              <StyledNodeIconButton onClick={toggle}>
+                <ExpandLessIcon />
+              </StyledNodeIconButton>
+            </>
+          )}
+          <StyledNodeTypography component={'div'}>
+            {node.data.collection} <code>[f={node.data.children.length}]</code>
+          </StyledNodeTypography>
+        </Box>
+        <StyledNodeIconButton onClick={handleMenuOpen}>
+          <MoreHorizIcon />
+        </StyledNodeIconButton>
+        <StyledTreeNodeMenu
+          type={'collection'}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={() => setOpenAddFolder(true)}>
+            <Typography component={'div'}>Add folder</Typography>
+          </MenuItem>
+          <MenuItem onClick={() => {}}>
+            <Typography component={'div'}>Docs</Typography>
+          </MenuItem>
+          <MenuItem onClick={() => {}}>
+            <Typography component={'div'}>Rename</Typography>
+          </MenuItem>
+          <MenuItem onClick={() => {}}>
+            <Typography
+              component={'div'}
+              sx={{
+                color: (theme) => theme.palette.error.main,
+              }}
+            >
+              Delete
+            </Typography>
+          </MenuItem>
+        </StyledTreeNodeMenu>
+      </StyledTreeNode>
+      <AddDialog
+        type={'folder'}
+        onSubmit={handleAddFolder}
+        onClose={() => setOpenAddFolder(false)}
+        open={openAddFolder}
+      />
+    </>
   );
 };
 

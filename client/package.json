@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudscape-design/components": "^3.0.126",
+    "@cloudscape-design/global-styles": "^1.0.5",
     "@codemirror/lang-sql": "^6.3.1",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -38,8 +40,8 @@
     "recoil": "^0.7.5",
     "rehype-sanitize": "^5.0.1",
     "rxjs": "^7.5.7",
-    "rxjs-hooks": "^0.8.0-alpha.0",
-    "rxjs-exhaustmap-with-trailing": "^2.1.0"
+    "rxjs-exhaustmap-with-trailing": "^2.1.0",
+    "rxjs-hooks": "^0.8.0-alpha.0"
   },
   "devDependencies": {
     "@types/phoenix": "^1.5.4",

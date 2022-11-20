@@ -20,7 +20,41 @@ defmodule GatewayWeb.Services.MainApi do
   end
 
   def add_collaborator(client, wp_id, collaborator_id) do
-    Tesla.post(client, "/api/Workspace/" <> wp_id <> "/User/" <> collaborator_id, %{}) |> get_response_body()
+    Tesla.post(client, "/api/Workspace/" <> wp_id <> "/User/" <> collaborator_id, %{})
+    |> get_response_body()
+  end
+
+  def create_collection(client, wp_id, payload) do
+    Tesla.post(client, "/api/Workspace/" <> wp_id <> "/Collection", payload)
+    |> get_response_body()
+  end
+
+  def create_folder(client, wp_id, col_id, payload) do
+    Tesla.post(
+      client,
+      "/api/Workspace/" <> wp_id <> "/Collection/" <> col_id <> "/Folder",
+      payload
+    )
+    |> get_response_body()
+  end
+
+  def create_query(client, wp_id, col_id, fol_id, payload) do
+    Tesla.post(
+      client,
+      "/api/Workspace/" <> wp_id <> "/Collection/" <> col_id <> "/Folder/" <> fol_id <> "/Query",
+      payload
+    )
+    |> get_response_body()
+  end
+
+  def update_query(client, wp_id, col_id, fol_id, q_id, payload) do
+    Tesla.patch(
+      client,
+      "/api/Workspace/" <>
+        wp_id <> "/Collection/" <> col_id <> "/Folder/" <> fol_id <> "/Query/" <> q_id,
+      payload
+    )
+    |> get_response_body()
   end
 
   def client(token) do
@@ -28,7 +62,7 @@ defmodule GatewayWeb.Services.MainApi do
       Tesla.Middleware.Logger,
       Tesla.Middleware.KeepRequest,
       {Tesla.Middleware.JSON,
-        decode_content_types: ["application/problem+json", "application/json"]},
+       decode_content_types: ["application/problem+json", "application/json"]},
       {Tesla.Middleware.BaseUrl, Application.fetch_env!(:gateway, :main_api_service_base_url)},
       {Tesla.Middleware.BearerAuth, token: token},
       {Tesla.Middleware.Timeout, timeout: 2_000},

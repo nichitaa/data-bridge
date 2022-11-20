@@ -12,9 +12,11 @@ import {
   collectionsPanelMaxSizeAtom,
   collectionsPanelMinSizeAtom,
   collectionsPanelSizeAtom,
+  currentSelectedQueryDataAtom,
+  currentWorkspaceInfoAtom,
 } from '../../../../recoil/atoms';
-import Tree, { useTreeState } from 'react-hyper-tree';
-import { useCallback } from 'react';
+import Tree, { HyperTreeViewProps, useTreeState } from 'react-hyper-tree';
+import { useCallback, useEffect, useMemo } from 'react';
 import { HyperTreeViewMainProps } from 'react-hyper-tree/dist/types';
 import CollectionTreeNode from './tree-nodes/collection-tree-node';
 import FolderTreeNode from './tree-nodes/folder-tree-node';
@@ -22,75 +24,7 @@ import QueryTreeNode from './tree-nodes/query-tree-node';
 import ActionBar from './action-bar';
 import SettingsEthernetOutlinedIcon from '@mui/icons-material/SettingsEthernetOutlined';
 import { StyledActionIconButton } from '../editor-panel/editor-panel-actions';
-
-const data = [
-  {
-    id: 1,
-    collection: 'employees',
-    children: [
-      {
-        id: 2,
-        folder: 'management dep',
-        children: [
-          {
-            id: 3,
-            query: 'annual report',
-          },
-          {
-            id: 4,
-            query: 'insert',
-          },
-          {
-            id: 5,
-            query: 'statistics',
-          },
-        ],
-      },
-      {
-        id: 6,
-        folder: 'IT department',
-        children: [
-          {
-            id: 7,
-            query: 'statistics',
-          },
-          {
-            id: 8,
-            query: 'monthly report',
-          },
-          {
-            id: 9,
-            query: 'general report',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 10,
-    collection: 'collection Name1',
-    children: [
-      {
-        id: 11,
-        folder: 'folder Name1',
-        children: [
-          {
-            id: 12,
-            query: 'query 2__1',
-          },
-          {
-            id: 13,
-            query: 'query 2__2',
-          },
-          {
-            id: 14,
-            query: 'query 2__3',
-          },
-        ],
-      },
-    ],
-  },
-];
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 interface MainProps {
   dimensions: { height: number; width: number };
@@ -103,13 +37,42 @@ const cls = collectionPanelClasses;
 
 const CollectionsPanel = (props: MainProps) => {
   const theme = useTheme();
+  const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
+  const setCurrentSelectedQueryData = useSetRecoilState(
+    currentSelectedQueryDataAtom
+  );
+
+  /** clean-up selected query node on workspaceId change */
+  useEffect(() => {
+    if (currentWorkspaceInfo !== undefined) {
+      return () => {
+        setCurrentSelectedQueryData(undefined);
+      };
+    }
+  }, [currentWorkspaceInfo]);
+
+  const collectionsData = useMemo(() => {
+    if (currentWorkspaceInfo !== undefined) {
+      return currentWorkspaceInfo.collections.map((col) => {
+        const collectionFolders = col.folders.map((fol) => {
+          const folderQueries = fol.queries.map((q) => {
+            return { ...q, query: q.name };
+          });
+          return { ...fol, folder: fol.name, children: folderQueries };
+        });
+        return { ...col, collection: col.name, children: collectionFolders };
+      });
+    }
+    return [];
+  }, [currentWorkspaceInfo]);
+
   const { maximizePanel } = usePanelResize({
     minSizeAtom: collectionsPanelMinSizeAtom,
     maxSizeAtom: collectionsPanelMaxSizeAtom,
     sizeAtom: collectionsPanelSizeAtom,
   });
   const { required, handlers, instance } = useTreeState({
-    data,
+    data: collectionsData,
     id: 'collections',
     multipleSelect: false,
     defaultOpened: true,
@@ -133,6 +96,14 @@ const CollectionsPanel = (props: MainProps) => {
     []
   );
 
+  const handleOnQuerySelectionChange: HyperTreeViewProps['setSelected'] = (
+    node,
+    selected
+  ) => {
+    setCurrentSelectedQueryData(node.data);
+    handlers.setSelected(node, selected);
+  };
+
   if (props.dimensions.width <= 35) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: '4px' }}>
@@ -153,6 +124,7 @@ const CollectionsPanel = (props: MainProps) => {
       <Tree
         {...required}
         {...handlers}
+        setSelected={handleOnQuerySelectionChange}
         classes={{
           selectedNodeWrapper: cls.selectedQuery,
         }}

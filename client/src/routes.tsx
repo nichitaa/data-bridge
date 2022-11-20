@@ -23,7 +23,6 @@ const CheckAuthPage = () => {
   const authStatus = useRecoilValue(authorizationStatusAtom);
 
   useEffect(() => {
-    console.log('[check-auth]: ', authStatus);
     if (!authStatus.loading) {
       if (authStatus.authorized) {
         navigate('/workspace');

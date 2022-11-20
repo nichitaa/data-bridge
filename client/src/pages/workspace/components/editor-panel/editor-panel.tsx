@@ -1,11 +1,26 @@
 import CodeMirror from '@uiw/react-codemirror';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { styled } from '@mui/material';
 import { githubDark } from '@uiw/codemirror-themes-all';
 import { PostgreSQL, sql } from '@codemirror/lang-sql';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  currentSelectedQueryDataAtom,
+  currentSqlQueryAtom,
+} from '../../../../recoil/atoms';
 
 const EditorPanel = () => {
-  const onChange = useCallback((value, viewUpdate) => {}, []);
+  const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
+  const [currentSqlQuery, setCurrentSqlQuery] =
+    useRecoilState(currentSqlQueryAtom);
+
+  useEffect(() => {
+    setCurrentSqlQuery(currentSelectedQueryData?.rawSql ?? '');
+  }, [currentSelectedQueryData]);
+
+  const onChange = useCallback((value, viewUpdate) => {
+    setCurrentSqlQuery(value);
+  }, []);
 
   return (
     <StyledEditorWrapper>
@@ -26,14 +41,7 @@ const EditorPanel = () => {
           indentOnInput: true,
         }}
         theme={githubDark}
-        value={`BEGIN
-    SELECT * INTO STRICT myrec FROM emp WHERE empname = myname;
-    EXCEPTION
-        WHEN NO_DATA_FOUND THEN
-            RAISE EXCEPTION 'employee % not found', myname;
-        WHEN TOO_MANY_ROWS THEN
-            RAISE EXCEPTION 'employee % not unique', myname;
-END;`}
+        value={currentSqlQuery}
         height={'100%'}
         extensions={[
           sql({

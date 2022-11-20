@@ -13,18 +13,113 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  currentQueryResultsAtom,
+  currentSelectedQueryDataAtom,
+  currentSqlQueryAtom,
+  currentWorkspaceInfoAtom,
+  workspaceChannelAtom,
+} from '../../../../recoil/atoms';
+import { notificationService } from '../../../../services';
+import { useEffect } from 'react';
 
 const cls = generateUtilityClasses('EditorPanelActions', ['wrapper']);
 
 const EditorPanelActions = () => {
+  const channel = useRecoilValue(workspaceChannelAtom);
+  const [currentSqlQuery, setCurrentSqlQuery] =
+    useRecoilState(currentSqlQueryAtom);
+  const setCurrentQueryResults = useSetRecoilState(currentQueryResultsAtom);
+  const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
+  const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
+
+  /** clean-up - reset query results on workspace change */
+  useEffect(() => {
+    setCurrentQueryResults(undefined);
+  }, [currentWorkspaceInfo]);
+
+  const handleRunQuery = () => {
+    const request = {
+      connectionString: currentWorkspaceInfo?.dbConnectionString!,
+      queryString: currentSqlQuery,
+      dataBaseType: 1,
+      pageSize: 10,
+      pageNumber: 1,
+    };
+
+    channel?.push('run_query', request).receive('ok', (response) => {
+      if (response.success) {
+        setCurrentQueryResults(response.data);
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Error at running query',
+          method: 'run_query',
+        });
+      }
+    });
+  };
+
+  const handleFormatQuery = () => {
+    const request = {
+      queryString: currentSqlQuery,
+    };
+    channel?.push('format_query', request).receive('ok', (response) => {
+      if (response.success) {
+        setCurrentSqlQuery(response.data);
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Could not format query',
+          method: 'format_query',
+        });
+      }
+    });
+  };
+
+  const handleSaveQuery = () => {
+    if (currentSelectedQueryData !== undefined) {
+      const collection = currentWorkspaceInfo?.collections?.find((c) => {
+        return (
+          c.folders.find((f) => f.id === currentSelectedQueryData.folderId) !==
+          undefined
+        );
+      });
+      const request = {
+        ...currentSelectedQueryData,
+        query_id: currentSelectedQueryData.id,
+        folder_id: currentSelectedQueryData.folderId,
+        collection_id: collection!.id,
+        rawSql: currentSqlQuery,
+        name: currentSelectedQueryData.name,
+      };
+      channel?.push('save_query_raw_sql', request).receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            variant: 'success',
+            message: response.message,
+            method: 'save_query_raw_sql',
+          });
+        } else {
+          notificationService.notify({
+            variant: 'error',
+            message: 'Could not update query',
+            method: 'save_query_raw_sql',
+          });
+        }
+      });
+    }
+  };
+
   return (
     <StyledEditorPanelActions className={cls.wrapper}>
       <Tooltip title={'Execute query'}>
-        <StyledActionIconButton variant={'success'}>
+        <StyledActionIconButton onClick={handleRunQuery} variant={'success'}>
           <PlayCircleFilledIcon />
         </StyledActionIconButton>
       </Tooltip>
-      <Tooltip title={'Format query'}>
+      <Tooltip onClick={handleFormatQuery} title={'Format query'}>
         <StyledActionIconButton variant={'info'}>
           <LocalFloristOutlinedIcon />
         </StyledActionIconButton>
@@ -35,7 +130,7 @@ const EditorPanelActions = () => {
         </StyledActionIconButton>
       </Tooltip>
 
-      <Tooltip title={'Save query'}>
+      <Tooltip onClick={handleSaveQuery} title={'Save query'}>
         <StyledActionIconButton variant={'success'}>
           <SaveOutlinedIcon />
         </StyledActionIconButton>
