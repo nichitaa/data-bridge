@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  # Phoenix Gateway (WS API - Channels & REST API)
+  #Phoenix Gateway (WS API - Channels & REST API)
   phoenix_gateway:
     container_name: phoenix_gateway
     build:
@@ -31,6 +31,7 @@ services:
 
   # Connector Service API
   connector-service:
+    container_name: connector_service
     image: nicolaedockerid/connectorservice
     ports:
       - '8082:80'
@@ -46,6 +47,7 @@ services:
 
   # MSSQL instance (for Auth Service)
   ms-sql-server:
+    container_name: ms-sql-server
     image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
     environment:
       ACCEPT_EULA: "Y"
