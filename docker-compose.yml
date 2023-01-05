@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  # Phoenix Gateway (WS API - Channels & REST API)
+  Phoenix Gateway (WS API - Channels & REST API)
   phoenix_gateway:
     container_name: phoenix_gateway
     build:
@@ -23,15 +23,18 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
-  connectore-service:
+  connector-service:
+    container_name: connector_service
     image: nicolaedockerid/connectorservice
     ports:
       - 8081:80
   auth-service:
+    container_name: auth_service
     image: nicolaedockerid/authservice
     ports:
       - 8080:80
   ms-sql-server:
+    container_name: ms-sql-server
     image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
     environment:
       ACCEPT_EULA: "Y"
