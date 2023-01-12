@@ -28,7 +28,8 @@ defmodule GatewayWeb.WorkspaceChannel do
     wp_id = workspace_id(socket)
     email = params["email"]
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.add_collaborator(wp_id, email)
 
     send(self(), :workspace_info)
@@ -39,7 +40,8 @@ defmodule GatewayWeb.WorkspaceChannel do
     wp_id = workspace_id(socket)
     email = params["email"]
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.delete_collaborator(wp_id, email)
 
     send(self(), :workspace_info)
@@ -51,20 +53,21 @@ defmodule GatewayWeb.WorkspaceChannel do
     email = params["email"]
     payload = %{role: params["role"]}
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.update_collaborator_role(wp_id, email, payload)
 
     send(self(), :workspace_info)
     {:reply, {:ok, response}, socket}
   end
 
-
   ## Resource API
 
   def handle_in("create_resource", params, socket) do
     wp_id = workspace_id(socket)
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.create_resource(wp_id, params)
 
     send(self(), :workspace_info)
@@ -74,7 +77,8 @@ defmodule GatewayWeb.WorkspaceChannel do
   def handle_in("rename_resource", params, socket) do
     wp_id = workspace_id(socket)
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.rename_resource(wp_id, params)
 
     send(self(), :workspace_info)
@@ -84,7 +88,8 @@ defmodule GatewayWeb.WorkspaceChannel do
   def handle_in("delete_resource", params, socket) do
     wp_id = workspace_id(socket)
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.delete_resource(wp_id, params)
 
     send(self(), :workspace_info)
@@ -97,13 +102,13 @@ defmodule GatewayWeb.WorkspaceChannel do
     wp_id = workspace_id(socket)
     query_id = params["queryId"]
 
-    response = main_api_client_with_jwt(socket)
+    response =
+      main_api_client_with_jwt(socket)
       |> MainApi.update_query(wp_id, query_id, params)
 
     send(self(), :workspace_info)
     {:reply, {:ok, response}, socket}
   end
-
 
   def handle_in("run_query", params, socket) do
     response =

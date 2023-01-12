@@ -2,7 +2,8 @@ defmodule GatewayWeb.MainApiController do
   use GatewayWeb, :controller
   alias GatewayWeb.Services.MainApi
 
-  plug GatewayWeb.Plugs.RequireJwt # when action in [:list_workspaces]
+  # when action in [:list_workspaces]
+  plug GatewayWeb.Plugs.RequireJwt
 
   ## Workspace API
   def list_workspaces(conn, _params) do
@@ -122,7 +123,7 @@ defmodule GatewayWeb.MainApiController do
 
   ## Query API
 
-  def update_query(conn, %{"workspace_id" => id, "query_id" => query_id } = params) do
+  def update_query(conn, %{"workspace_id" => id, "query_id" => query_id} = params) do
     body = conn.body_params
 
     response =
@@ -132,5 +133,4 @@ defmodule GatewayWeb.MainApiController do
 
     json(conn, response)
   end
-
 end

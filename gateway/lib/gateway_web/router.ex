@@ -25,8 +25,15 @@ defmodule GatewayWeb.Router do
       patch "/workspace/:workspace_id", MainApiController, :update_workspace_by_id
       ## Collaborator API
       post "/workspace/:workspace_id/collaborator/:email", MainApiController, :add_collaborator
-      delete "/workspace/:workspace_id/collaborator/:email", MainApiController, :delete_collaborator
-      post "/workspace/:workspace_id/collaborator/:email/update-role", MainApiController, :update_collaborator_role
+
+      delete "/workspace/:workspace_id/collaborator/:email",
+             MainApiController,
+             :delete_collaborator
+
+      post "/workspace/:workspace_id/collaborator/:email/update-role",
+           MainApiController,
+           :update_collaborator_role
+
       ## Resource API
       post "/workspace/:workspace_id/create-resource", MainApiController, :create_resource
       post "/workspace/:workspace_id/rename-resource", MainApiController, :rename_resource
