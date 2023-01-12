@@ -58,7 +58,7 @@ export const authorizationStatusAtom = atom({
 });
 
 export const currentUserAtom = atom<
-  { username: string; userId: string } | undefined
+  { userEmail: string; userId: string } | undefined
 >({
   key: 'currentUserAtom',
   default: undefined,
@@ -110,11 +110,11 @@ export const allWorkspaceCollaboratorsAtom = atom({
   key: 'allWorkspaceCollaboratorsAtom',
   default: [
     {
-      username: 'John',
+      email: 'John',
       userId: '1234-1234-1234-0000',
     },
     {
-      username: 'George',
+      email: 'George',
       userId: '1234-1234-1234-0001',
     },
   ],

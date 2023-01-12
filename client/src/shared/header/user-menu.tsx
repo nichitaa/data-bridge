@@ -1,5 +1,5 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { currentUserAtom, jwtAtom } from '../../recoil/atoms';
+import {useRecoilState, useRecoilValue} from 'recoil';
+import {currentUserAtom, jwtAtom} from '../../recoil/atoms';
 import {
   Avatar,
   Box,
@@ -10,10 +10,10 @@ import {
   styled,
   Typography,
 } from '@mui/material';
-import { MouseEvent, useEffect, useState } from 'react';
-import { useAuthHandlers } from '../../hooks/use-jwt-auth';
-import { authService, notificationService } from '../../services';
-import { TOAST_VARIANT } from '../toast/toast.types';
+import {MouseEvent, useEffect, useState} from 'react';
+import {useAuthHandlers} from '../../hooks/use-jwt-auth';
+import {authService, notificationService} from '../../services';
+import {TOAST_VARIANT} from '../toast/toast.types';
 
 const UserMenu = () => {
   const jwt = useRecoilValue(jwtAtom);
@@ -21,17 +21,14 @@ const UserMenu = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { logout } = useAuthHandlers();
+  const {logout} = useAuthHandlers();
 
   useEffect(() => {
     (async () => {
       if (jwt !== undefined) {
         const response = await authService.getSelf(jwt);
         if (response.success) {
-          setCurrentUser({
-            userId: response.data.userId,
-            username: response.data.userName,
-          });
+          setCurrentUser(response.data);
         } else {
           notificationService.notify({
             variant: TOAST_VARIANT.error,
@@ -52,7 +49,7 @@ const UserMenu = () => {
   };
 
   return (
-    <Box sx={{ paddingLeft: '15px' }}>
+    <Box sx={{paddingLeft: '15px'}}>
       <IconButton onClick={handleMenuOpen}>
         <Avatar
           sx={{
@@ -61,7 +58,8 @@ const UserMenu = () => {
             backgroundColor: (theme) => theme.palette.primary.main,
           }}
         >
-          {currentUser?.username[0]}
+          {/* first letter */}
+          {currentUser?.userEmail[0]}
         </Avatar>
       </IconButton>
       <StyledMenu
@@ -88,7 +86,7 @@ const UserMenu = () => {
   );
 };
 
-export const StyledMenu = styled(Menu)(({ theme }) => ({
+export const StyledMenu = styled(Menu)(({theme}) => ({
   [`& .${menuClasses.list}`]: {
     padding: 0,
   },

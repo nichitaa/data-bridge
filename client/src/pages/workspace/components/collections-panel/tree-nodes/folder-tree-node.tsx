@@ -1,6 +1,6 @@
-import { DefaultNodeProps } from 'react-hyper-tree/dist/types';
-import { treeHandlers } from 'react-hyper-tree';
-import { Box, MenuItem, Typography } from '@mui/material';
+import {DefaultNodeProps} from 'react-hyper-tree/dist/types';
+import {treeHandlers} from 'react-hyper-tree';
+import {Box, MenuItem, Typography} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -10,16 +10,17 @@ import {
   StyledTreeNode,
   StyledTreeNodeMenu,
 } from './collection-tree-node';
-import { MouseEvent, MouseEventHandler, useState } from 'react';
-import { notificationService } from '../../../../../services';
-import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../../../../recoil/atoms';
+import {MouseEvent, MouseEventHandler, useState} from 'react';
+import {notificationService} from '../../../../../services';
+import {useRecoilValue} from 'recoil';
+import {workspaceChannelAtom} from '../../../../../recoil/atoms';
 import AddDialog from '../../add-dialog/add-dialog';
 
-interface MainProps extends DefaultNodeProps {}
+interface MainProps extends DefaultNodeProps {
+}
 
 const FolderTreeNode = (props: MainProps) => {
-  const { node } = props;
+  const {node} = props;
   const channel = useRecoilValue(workspaceChannelAtom);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openAddQueryDialog, setOpenAddQueryDialog] = useState(false);
@@ -33,13 +34,14 @@ const FolderTreeNode = (props: MainProps) => {
       });
     }
     const request = {
-      collection_id: node.data.collectionId,
-      folder_id: node.data.id,
-      name: name,
+      type: 'query',
+      collectionId: node.data.collectionId,
+      folderId: node.data.id,
+      name,
       documentation: `### documentation for query ${name}!`,
-      rawSql: `-- sql for query ${name}`,
+      rawSql: `-- sql comment for query ${name}`,
     };
-    channel?.push('create_query', request).receive('ok', (response) => {
+    channel?.push('create_resource', request).receive('ok', (response) => {
       if (response.success) {
         notificationService.notify({
           message: 'Query created!',
@@ -81,13 +83,13 @@ const FolderTreeNode = (props: MainProps) => {
           {node.options.opened ? (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandMoreIcon />
+                <ExpandMoreIcon/>
               </StyledNodeIconButton>
             </>
           ) : (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandLessIcon />
+                <ExpandLessIcon/>
               </StyledNodeIconButton>
             </>
           )}
@@ -96,7 +98,7 @@ const FolderTreeNode = (props: MainProps) => {
           </StyledNodeTypography>
         </Box>
         <StyledNodeIconButton onClick={handleMenuOpen}>
-          <MoreHorizIcon />
+          <MoreHorizIcon/>
         </StyledNodeIconButton>
         <StyledTreeNodeMenu
           type={'folder'}
@@ -116,13 +118,16 @@ const FolderTreeNode = (props: MainProps) => {
           <MenuItem onClick={() => setOpenAddQueryDialog(true)}>
             <Typography component={'div'}>Add query</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography component={'div'}>Docs</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography component={'div'}>Rename</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography
               component={'div'}
               sx={{

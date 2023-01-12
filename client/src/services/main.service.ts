@@ -39,7 +39,7 @@ export class MainService implements MainServiceAPI {
   }
 
   public listWorkspaces: MainServiceAPI['listWorkspaces'] = async (jwt) => {
-    return await fetch(`${this.baseUrl}/workspace`, {
+    return await fetch(`${this.baseUrl}/workspaces`, {
       method: 'GET',
       headers: {
         'content-type': 'application/json',

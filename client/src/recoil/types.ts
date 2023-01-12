@@ -39,15 +39,15 @@ interface FolderInfo {
 }
 
 export interface QueryInfo {
-  count: number;
-  defaultResponseWithLimit: string;
+  collectionId: string;
+  count: number | null;
   documentation: string;
   folderId: string;
   id: string;
-  lastExecuteTime: number;
   name: string;
   rawSql: string;
-  size: number;
+  size: number | null;
+  query: string;
 }
 
 export interface QueryResult {

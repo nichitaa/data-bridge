@@ -5,7 +5,7 @@ import { useAuthHandlers } from '../hooks/use-jwt-auth';
 
 const LoginPage = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const { login, register } = useAuthHandlers();
@@ -53,12 +53,12 @@ const LoginPage = () => {
         </Typography>
         <TextField
           required
-          value={credentials.username}
+          value={credentials.email}
           onChange={(e) =>
-            setCredentials((prev) => ({ ...prev, username: e.target.value }))
+            setCredentials((prev) => ({ ...prev, email: e.target.value }))
           }
           onKeyDown={handleOnKeyDown}
-          placeholder='username'
+          placeholder='email'
           autoComplete={'off'}
         />
         <TextField

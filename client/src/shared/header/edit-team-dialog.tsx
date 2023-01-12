@@ -68,9 +68,9 @@ const EditTeamDialog = (props: EditTeamDialog) => {
                 }
               >
                 <ListItemAvatar>
-                  <Avatar>{c.username[0]}</Avatar>
+                  <Avatar>{c.email[0]}</Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={c.username} />
+                <ListItemText primary={c.email} />
               </ListItem>
             );
           })}

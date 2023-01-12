@@ -1,5 +1,5 @@
-import { DefaultNodeProps } from 'react-hyper-tree/dist/types';
-import { treeHandlers } from 'react-hyper-tree';
+import {DefaultNodeProps} from 'react-hyper-tree/dist/types';
+import {treeHandlers} from 'react-hyper-tree';
 import {
   alpha,
   Box,
@@ -20,16 +20,17 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { MouseEvent, MouseEventHandler, useState } from 'react';
+import {MouseEvent, MouseEventHandler, useState} from 'react';
 import AddDialog from '../../add-dialog/add-dialog';
-import { notificationService } from '../../../../../services';
-import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../../../../recoil/atoms';
+import {notificationService} from '../../../../../services';
+import {useRecoilValue} from 'recoil';
+import {workspaceChannelAtom} from '../../../../../recoil/atoms';
 
-interface MainProps extends DefaultNodeProps {}
+interface MainProps extends DefaultNodeProps {
+}
 
 const CollectionTreeNode = (props: MainProps) => {
-  const { node } = props;
+  const {node} = props;
   const channel = useRecoilValue(workspaceChannelAtom);
   const [openAddFolder, setOpenAddFolder] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -46,9 +47,10 @@ const CollectionTreeNode = (props: MainProps) => {
         method: 'create_folder',
       });
     }
-    const collectionData = node.data;
+    const collectionId = node.data.id;
+    console.log('collectionId: ', collectionId);
     channel
-      ?.push('create_folder', { name: name, collection_id: collectionData.id })
+      ?.push('create_resource', {name, collectionId, type: 'folder'})
       .receive('ok', (response) => {
         if (response.success) {
           notificationService.notify({
@@ -86,13 +88,13 @@ const CollectionTreeNode = (props: MainProps) => {
           {node.options.opened ? (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandMoreIcon />
+                <ExpandMoreIcon/>
               </StyledNodeIconButton>
             </>
           ) : (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandLessIcon />
+                <ExpandLessIcon/>
               </StyledNodeIconButton>
             </>
           )}
@@ -101,7 +103,7 @@ const CollectionTreeNode = (props: MainProps) => {
           </StyledNodeTypography>
         </Box>
         <StyledNodeIconButton onClick={handleMenuOpen}>
-          <MoreHorizIcon />
+          <MoreHorizIcon/>
         </StyledNodeIconButton>
         <StyledTreeNodeMenu
           type={'collection'}
@@ -121,13 +123,16 @@ const CollectionTreeNode = (props: MainProps) => {
           <MenuItem onClick={() => setOpenAddFolder(true)}>
             <Typography component={'div'}>Add folder</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography component={'div'}>Docs</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography component={'div'}>Rename</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => {
+          }}>
             <Typography
               component={'div'}
               sx={{
@@ -157,7 +162,7 @@ interface StyledTreeNodeMenuProps extends MenuProps {
 
 export const StyledTreeNodeMenu = styled(Menu, {
   shouldForwardProp: (prop) => !['type'].includes(prop as string),
-})<StyledTreeNodeMenuProps>(({ theme, type }) => ({
+})<StyledTreeNodeMenuProps>(({theme, type}) => ({
   [`& .${menuClasses.list}`]: {
     padding: 0,
     [`& .${menuItemClasses.root}`]: {
@@ -171,17 +176,17 @@ export const StyledTreeNodeMenu = styled(Menu, {
   [`& .${menuClasses.paper}`]: {
     ...(type === 'collection'
       ? {
-          border: `1px solid ${alpha(theme.palette.warning.main, 0.5)}`,
-        }
+        border: `1px solid ${alpha(theme.palette.warning.main, 0.5)}`,
+      }
       : type === 'folder'
-      ? {
+        ? {
           border: `1px solid ${alpha(theme.palette.info.main, 0.5)}`,
         }
-      : type === 'query'
-      ? {
-          border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-        }
-      : {}),
+        : type === 'query'
+          ? {
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+          }
+          : {}),
   },
 }));
 
@@ -191,7 +196,7 @@ interface StyledTreeNodeProps extends BoxProps {
 
 export const StyledTreeNode = styled(Box, {
   shouldForwardProp: (prop) => !['type'].includes(prop as string),
-})<StyledTreeNodeProps>(({ theme, type }) => ({
+})<StyledTreeNodeProps>(({theme, type}) => ({
   paddingLeft: 5,
   paddingRight: 5,
   display: 'flex',
@@ -208,33 +213,33 @@ export const StyledTreeNode = styled(Box, {
   marginTop: 2,
   ...(type === 'collection'
     ? {
-        borderColor: alpha(theme.palette.warning.main, 0.3),
-        backgroundColor: alpha(theme.palette.warning.main, 0.1),
-        '&:hover': {
-          backgroundColor: alpha(theme.palette.warning.main, 0.2),
-        },
-      }
+      borderColor: alpha(theme.palette.warning.main, 0.3),
+      backgroundColor: alpha(theme.palette.warning.main, 0.1),
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.warning.main, 0.2),
+      },
+    }
     : type === 'folder'
-    ? {
+      ? {
         borderColor: alpha(theme.palette.info.main, 0.3),
         backgroundColor: alpha(theme.palette.info.main, 0.1),
         '&:hover': {
           backgroundColor: alpha(theme.palette.info.main, 0.2),
         },
       }
-    : type === 'query'
-    ? {
-        borderColor: alpha(theme.palette.primary.main, 0.3),
-        backgroundColor: alpha(theme.palette.primary.main, 0.1),
-        '&:hover': {
-          backgroundColor: alpha(theme.palette.primary.main, 0.3),
-        },
-      }
-    : {}),
+      : type === 'query'
+        ? {
+          borderColor: alpha(theme.palette.primary.main, 0.3),
+          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+          '&:hover': {
+            backgroundColor: alpha(theme.palette.primary.main, 0.3),
+          },
+        }
+        : {}),
 }));
 
 export const StyledNodeTypography = styled(Typography)<TypographyProps>(
-  ({ theme }) => ({
+  ({theme}) => ({
     marginLeft: '5px',
     fontSize: 14,
     whiteSpace: 'nowrap',
@@ -250,7 +255,7 @@ export const StyledNodeTypography = styled(Typography)<TypographyProps>(
 ) as typeof Typography;
 
 export const StyledNodeIconButton = styled(IconButton)<IconButtonProps>(
-  ({ theme }) => ({
+  ({theme}) => ({
     padding: 2,
     borderRadius: 4,
     [`& .${svgIconClasses.root}`]: {

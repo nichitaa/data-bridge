@@ -50,7 +50,7 @@ export const useAuthHandlers = () => {
   const setAuthStatus = useSetRecoilState(authorizationStatusAtom);
 
   const handleLogin = async (credentials: {
-    username: string;
+    email: string;
     password: string;
   }) => {
     setAuthStatus((prev) => ({ ...prev, loading: true }));
@@ -76,7 +76,7 @@ export const useAuthHandlers = () => {
   };
 
   const handleRegister = async (credentials: {
-    username: string;
+    email: string;
     password: string;
   }) => {
     const response = await authService.register(credentials);

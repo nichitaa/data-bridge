@@ -3,16 +3,16 @@ import { APIResponse } from './types';
 
 interface AuthServiceAPI {
   login: (payload: {
-    username: string;
+    email: string;
     password: string;
   }) => Promise<APIResponse<{ token: string; userName: string }>>;
   register: (payload: {
-    username: string;
+    email: string;
     password: string;
   }) => Promise<APIResponse<{ token: string; userName: string }>>;
   getSelf: (
     jwt: string
-  ) => Promise<APIResponse<{ userName: string; userId: string }>>;
+  ) => Promise<APIResponse<{ userEmail: string; userId: string }>>;
 }
 
 export class AuthService implements AuthServiceAPI {

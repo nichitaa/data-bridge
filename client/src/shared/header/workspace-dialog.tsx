@@ -34,7 +34,6 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
     name: '',
     dbConnectionString: '',
     envVariables: '',
-    documentation: 'documentation for you workspace',
   });
 
   useEffect(() => {
@@ -43,7 +42,6 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
         name: currentWorkspaceInfo?.name,
         dbConnectionString: currentWorkspaceInfo?.dbConnectionString,
         envVariables: currentWorkspaceInfo?.envVariables ?? '',
-        documentation: currentWorkspaceInfo?.documentation,
       });
     }
   }, [type, currentWorkspaceInfo]);
@@ -55,14 +53,12 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
         name: currentWorkspaceInfo?.name!,
         dbConnectionString: currentWorkspaceInfo?.dbConnectionString!,
         envVariables: currentWorkspaceInfo?.envVariables ?? '',
-        documentation: currentWorkspaceInfo?.documentation!,
       });
     } else {
       setWorkspaceInfoForm({
         name: '',
         dbConnectionString: '',
         envVariables: '',
-        documentation: 'documentation for you workspace',
       });
     }
     dialogProps?.onClose?.(event, reason);
@@ -150,26 +146,26 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
     const isValid = await validateWorkspace();
     if (!isValid) return;
     setLoading(true);
-    const updateResponse = await mainService.updateWorkspace(
-      jwt!,
-      currentWorkspaceInfo?.id!,
-      workspaceInfoForm
-    );
-    if (updateResponse.success) {
-      notificationService.notify({
-        variant: 'success',
-        message: 'Successfully updated workspace!',
-        method: 'update-wp',
-      });
-      await reFetchAllWorkspaces();
-      dialogProps?.onClose?.({}, 'escapeKeyDown');
-    } else {
-      notificationService.notify({
-        variant: 'error',
-        method: 'update-wp',
-        message: `Could not update workspace!`,
-      });
-    }
+    // const updateResponse = await mainService.updateWorkspace(
+    //   jwt!,
+    //   currentWorkspaceInfo?.id!,
+    //   workspaceInfoForm
+    // );
+    // if (updateResponse.success) {
+    //   notificationService.notify({
+    //     variant: 'success',
+    //     message: 'Successfully updated workspace!',
+    //     method: 'update-wp',
+    //   });
+    //   await reFetchAllWorkspaces();
+    //   dialogProps?.onClose?.({}, 'escapeKeyDown');
+    // } else {
+    //   notificationService.notify({
+    //     variant: 'error',
+    //     method: 'update-wp',
+    //     message: `Could not update workspace!`,
+    //   });
+    // }
     setLoading(false);
   };
   return (
