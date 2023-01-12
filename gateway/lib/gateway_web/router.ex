@@ -17,12 +17,22 @@ defmodule GatewayWeb.Router do
     end
 
     scope "/main" do
-      get "/workspace", MainApiController, :list_workspaces
+      ## Workspace API
+      get "/workspaces", MainApiController, :list_workspaces
       get "/workspace/:workspace_id", MainApiController, :get_workspace_by_id
       post "/workspace", MainApiController, :create_workspace
       delete "/workspace/:workspace_id", MainApiController, :delete_workspace_by_id
       patch "/workspace/:workspace_id", MainApiController, :update_workspace_by_id
-      post "/workspace/:workspace_id/collaborator/:collaborator_id", MainApiController, :add_collaborator
+      ## Collaborator API
+      post "/workspace/:workspace_id/collaborator/:email", MainApiController, :add_collaborator
+      delete "/workspace/:workspace_id/collaborator/:email", MainApiController, :delete_collaborator
+      post "/workspace/:workspace_id/collaborator/:email/update-role", MainApiController, :update_collaborator_role
+      ## Resource API
+      post "/workspace/:workspace_id/create-resource", MainApiController, :create_resource
+      post "/workspace/:workspace_id/rename-resource", MainApiController, :rename_resource
+      delete "/workspace/:workspace_id/delete-resource", MainApiController, :delete_resource
+      ## Query API
+      patch "/workspace/:workspace_id/query/:query_id", MainApiController, :update_query
     end
 
     scope "/db" do

@@ -22,47 +22,88 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, %{success: true, data: "from event_name reply"}}, socket}
   end
 
-  def handle_in("create_collection", params, socket) do
-    wp_id = socket.assigns.workspace_id
+  ## Collaborator API
 
-    response =
-      socket.assigns.jwt
-      |> MainApi.client()
-      |> MainApi.create_collection(wp_id, params)
+  def handle_in("add_collaborator", params, socket) do
+    wp_id = workspace_id(socket)
+    email = params["email"]
+
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.add_collaborator(wp_id, email)
 
     send(self(), :workspace_info)
-
     {:reply, {:ok, response}, socket}
   end
 
-  def handle_in("create_folder", params, socket) do
-    wp_id = socket.assigns.workspace_id
-    col_id = params["collection_id"]
+  def handle_in("delete_collaborator", params, socket) do
+    wp_id = workspace_id(socket)
+    email = params["email"]
 
-    response =
-      socket.assigns.jwt
-      |> MainApi.client()
-      |> MainApi.create_folder(wp_id, col_id, params)
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.delete_collaborator(wp_id, email)
 
     send(self(), :workspace_info)
-
     {:reply, {:ok, response}, socket}
   end
 
-  def handle_in("create_query", params, socket) do
-    wp_id = socket.assigns.workspace_id
-    col_id = params["collection_id"]
-    fol_id = params["folder_id"]
+  def handle_in("update_collaborator_role", params, socket) do
+    wp_id = workspace_id(socket)
+    email = params["email"]
+    payload = %{role: params["role"]}
 
-    response =
-      socket.assigns.jwt
-      |> MainApi.client()
-      |> MainApi.create_query(wp_id, col_id, fol_id, params)
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.update_collaborator_role(wp_id, email, payload)
 
     send(self(), :workspace_info)
-
     {:reply, {:ok, response}, socket}
   end
+
+
+  ## Resource API
+
+  def handle_in("create_resource", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.create_resource(wp_id, params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
+  def handle_in("rename_resource", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.rename_resource(wp_id, params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
+  def handle_in("delete_resource", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.delete_resource(wp_id, params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
+  ## Query API
+
+  def handle_in("update_query", params, socket) do
+    wp_id = workspace_id(socket)
+    query_id = params["queryId"]
+
+    response = main_api_client_with_jwt(socket)
+      |> MainApi.update_query(wp_id, query_id, params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
 
   def handle_in("run_query", params, socket) do
     response =
@@ -82,21 +123,7 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, response}, socket}
   end
 
-  def handle_in("save_query_raw_sql", params, socket) do
-    wp_id = socket.assigns.workspace_id
-    col_id = params["collection_id"]
-    fol_id = params["folder_id"]
-    q_id = params["query_id"]
-
-    response =
-      socket.assigns.jwt
-      |> MainApi.client()
-      |> MainApi.update_query(wp_id, col_id, fol_id, q_id, params)
-
-    send(self(), :workspace_info)
-
-    {:reply, {:ok, response}, socket}
-  end
+  ## Side effects
 
   def handle_info(:workspace_info, socket) do
     dbg("[wp] workspace_info")
@@ -134,4 +161,13 @@ defmodule GatewayWeb.WorkspaceChannel do
     dbg("[wp]-[terminate] reason=#{inspect(reason)}")
     :ok
   end
+
+  ## Utils
+
+  defp main_api_client_with_jwt(socket) do
+    socket.assigns.jwt
+    |> MainApi.client()
+  end
+
+  defp workspace_id(socket), do: socket.assigns.workspace_id
 end

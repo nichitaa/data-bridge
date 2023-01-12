@@ -1,59 +1,66 @@
 defmodule GatewayWeb.Services.MainApi do
+
+  ## Workspace API
+
   def list_workspaces(client) do
-    Tesla.get(client, "/api/Workspace") |> get_response_body()
+    Tesla.get(client, "/api/workspaces") |> get_response_body()
   end
 
   def get_workspace_by_id(client, id) do
-    Tesla.get(client, "/api/Workspace/" <> id) |> get_response_body()
+    Tesla.get(client, "/api/workspace/" <> id) |> get_response_body()
   end
 
   def create_workspace(client, payload) do
-    Tesla.post(client, "/api/Workspace", payload) |> get_response_body()
+    Tesla.post(client, "/api/workspace", payload) |> get_response_body()
   end
 
   def delete_workspace_by_id(client, id) do
-    Tesla.delete(client, "/api/Workspace/" <> id) |> get_response_body()
+    Tesla.delete(client, "/api/workspace/" <> id) |> get_response_body()
   end
 
   def update_workspace_by_id(client, id, payload) do
-    Tesla.patch(client, "/api/Workspace/" <> id, payload) |> get_response_body()
+    Tesla.patch(client, "/api/workspace/" <> id, payload) |> get_response_body()
   end
 
-  def add_collaborator(client, wp_id, collaborator_id) do
-    Tesla.post(client, "/api/Workspace/" <> wp_id <> "/User/" <> collaborator_id, %{})
+  ## Collaborator API
+
+  def add_collaborator(client, wp_id, email) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/collaborator/" <> email, %{})
     |> get_response_body()
   end
 
-  def create_collection(client, wp_id, payload) do
-    Tesla.post(client, "/api/Workspace/" <> wp_id <> "/Collection", payload)
+  def delete_collaborator(client, wp_id, email) do
+    Tesla.delete(client, "/api/workspace/" <> wp_id <> "/collaborator/" <> email)
     |> get_response_body()
   end
 
-  def create_folder(client, wp_id, col_id, payload) do
-    Tesla.post(
-      client,
-      "/api/Workspace/" <> wp_id <> "/Collection/" <> col_id <> "/Folder",
-      payload
-    )
+  def update_collaborator_role(client, wp_id, email, payload) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/collaborator/" <> email <> "/update-role", payload)
     |> get_response_body()
   end
 
-  def create_query(client, wp_id, col_id, fol_id, payload) do
-    Tesla.post(
-      client,
-      "/api/Workspace/" <> wp_id <> "/Collection/" <> col_id <> "/Folder/" <> fol_id <> "/Query",
-      payload
-    )
+  ## Resource API
+
+  def create_resource(client, wp_id, payload) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/create-resource", payload)
     |> get_response_body()
   end
 
-  def update_query(client, wp_id, col_id, fol_id, q_id, payload) do
-    Tesla.patch(
-      client,
-      "/api/Workspace/" <>
-        wp_id <> "/Collection/" <> col_id <> "/Folder/" <> fol_id <> "/Query/" <> q_id,
-      payload
-    )
+  def rename_resource(client, wp_id, payload) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/rename-resource", payload)
+    |> get_response_body()
+  end
+
+  # TODO: wait for fix
+  def delete_resource(client, wp_id, payload) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/delete-resource", payload)
+    |> get_response_body()
+  end
+
+  ## Query API
+
+  def update_query(client, wp_id, query_id, payload) do
+    Tesla.patch(client, "/api/workspace/" <> wp_id <> "/query/" <> query_id, payload)
     |> get_response_body()
   end
 
