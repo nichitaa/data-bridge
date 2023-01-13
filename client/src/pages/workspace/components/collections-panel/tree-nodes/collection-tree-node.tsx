@@ -177,9 +177,6 @@ const CollectionTreeNode = (props: MainProps) => {
           <MenuItem onClick={() => setAddFolderModalOpen(true)}>
             <Typography component={'div'}>Add folder</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
-            <Typography component={'div'}>Docs</Typography>
-          </MenuItem>
           <MenuItem onClick={() => setRenameCollectionModalOpen(true)}>
             <Typography component={'div'}>Rename</Typography>
           </MenuItem>

@@ -193,7 +193,6 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
               handleOnFieldChange('dbConnectionString', e.target.value)
             }
             placeholder={'connection string'}
-            autoFocus
             fullWidth
           />
           <TextField
@@ -203,7 +202,6 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
               handleOnFieldChange('envVariables', e.target.value)
             }
             placeholder={'environment values e.g.: VAR1=hello;VAR2=world'}
-            autoFocus
             fullWidth
           />
         </Box>

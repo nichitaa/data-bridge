@@ -177,9 +177,6 @@ const FolderTreeNode = (props: MainProps) => {
           <MenuItem onClick={() => setAddQueryModalOpen(true)}>
             <Typography component={'div'}>Add query</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {}}>
-            <Typography component={'div'}>Docs</Typography>
-          </MenuItem>
           <MenuItem onClick={() => setRenameModalOpen(true)}>
             <Typography component={'div'}>Rename</Typography>
           </MenuItem>
