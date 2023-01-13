@@ -1,5 +1,4 @@
-import {DefaultNodeProps} from 'react-hyper-tree/dist/types';
-import {treeHandlers} from 'react-hyper-tree';
+import { DefaultNodeProps } from 'react-hyper-tree/dist/types';
 import {
   alpha,
   Box,
@@ -20,23 +19,30 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import {MouseEvent, MouseEventHandler, useState} from 'react';
-import AddDialog from '../../add-dialog/add-dialog';
-import {notificationService} from '../../../../../services';
-import {useRecoilValue} from 'recoil';
-import {workspaceChannelAtom} from '../../../../../recoil/atoms';
+import React, { MouseEvent, useState } from 'react';
+import AddDialog from '../../menu-dialog/add-dialog';
+import { notificationService } from '../../../../../services';
+import { useRecoilValue } from 'recoil';
+import { workspaceChannelAtom } from '../../../../../recoil/atoms';
+import { useKeepNodeOpen } from '../../../../../hooks/use-keep-node-open';
+import RenameDialog from '../../menu-dialog/rename-dialog';
 
-interface MainProps extends DefaultNodeProps {
-}
+interface MainProps extends DefaultNodeProps {}
 
 const CollectionTreeNode = (props: MainProps) => {
-  const {node} = props;
+  const { node } = props;
   const channel = useRecoilValue(workspaceChannelAtom);
-  const [openAddFolder, setOpenAddFolder] = useState(false);
+  const [addFolderModalOpen, setAddFolderModalOpen] = useState(false);
+  const [renameCollectionModalOpen, setRenameCollectionModalOpen] =
+    useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const toggle: MouseEventHandler = (e) => {
-    e.stopPropagation();
-    treeHandlers.trees.collections.handlers.setOpen(node, !node.isSelected());
+  const collectionId = node.data.id;
+  const collectionName = node.data.name;
+
+  useKeepNodeOpen(node);
+
+  const toggle: React.MouseEventHandler<Element> = (e) => {
+    props.onToggle(e as any);
   };
 
   const handleAddFolder = (name: string, clearStateName: () => void) => {
@@ -47,10 +53,8 @@ const CollectionTreeNode = (props: MainProps) => {
         method: 'create_folder',
       });
     }
-    const collectionId = node.data.id;
-    console.log('collectionId: ', collectionId);
     channel
-      ?.push('create_resource', {name, collectionId, type: 'folder'})
+      ?.push('create_resource', { name, collectionId, type: 'folder' })
       .receive('ok', (response) => {
         if (response.success) {
           notificationService.notify({
@@ -58,12 +62,62 @@ const CollectionTreeNode = (props: MainProps) => {
             variant: 'success',
             method: 'create_folder',
           });
-          setOpenAddFolder(false);
+          setAddFolderModalOpen(false);
           clearStateName();
           handleMenuClose();
         } else {
           notificationService.notify({
             message: 'Could not create folder!',
+            variant: 'error',
+            method: 'create_folder',
+          });
+        }
+      });
+  };
+
+  const handleRenameCollection = (name: string) => {
+    if (name.trim() === '') {
+      return notificationService.notify({
+        message: 'Name could not be empty',
+        variant: 'error',
+        method: 'rename_resource',
+      });
+    }
+    channel
+      ?.push('rename_resource', { name, id: collectionId, type: 'collection' })
+      .receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            message: 'Collection renamed!',
+            variant: 'success',
+            method: 'rename_resource',
+          });
+          setRenameCollectionModalOpen(false);
+          handleMenuClose();
+        } else {
+          notificationService.notify({
+            message: 'Could not rename collection!',
+            variant: 'error',
+            method: 'rename_resource',
+          });
+        }
+      });
+  };
+
+  const handleDeleteCollection = () => {
+    channel
+      ?.push('delete_resource', { id: collectionId, type: 'collection' })
+      .receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            message: 'Collection deleted!',
+            variant: 'success',
+            method: 'create_folder',
+          });
+          handleMenuClose();
+        } else {
+          notificationService.notify({
+            message: 'Could not delete collection!',
             variant: 'error',
             method: 'create_folder',
           });
@@ -88,13 +142,13 @@ const CollectionTreeNode = (props: MainProps) => {
           {node.options.opened ? (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandMoreIcon/>
+                <ExpandMoreIcon />
               </StyledNodeIconButton>
             </>
           ) : (
             <>
               <StyledNodeIconButton onClick={toggle}>
-                <ExpandLessIcon/>
+                <ExpandLessIcon />
               </StyledNodeIconButton>
             </>
           )}
@@ -103,7 +157,7 @@ const CollectionTreeNode = (props: MainProps) => {
           </StyledNodeTypography>
         </Box>
         <StyledNodeIconButton onClick={handleMenuOpen}>
-          <MoreHorizIcon/>
+          <MoreHorizIcon />
         </StyledNodeIconButton>
         <StyledTreeNodeMenu
           type={'collection'}
@@ -120,19 +174,16 @@ const CollectionTreeNode = (props: MainProps) => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={() => setOpenAddFolder(true)}>
+          <MenuItem onClick={() => setAddFolderModalOpen(true)}>
             <Typography component={'div'}>Add folder</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {
-          }}>
+          <MenuItem onClick={() => {}}>
             <Typography component={'div'}>Docs</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {
-          }}>
+          <MenuItem onClick={() => setRenameCollectionModalOpen(true)}>
             <Typography component={'div'}>Rename</Typography>
           </MenuItem>
-          <MenuItem onClick={() => {
-          }}>
+          <MenuItem onClick={handleDeleteCollection}>
             <Typography
               component={'div'}
               sx={{
@@ -147,8 +198,15 @@ const CollectionTreeNode = (props: MainProps) => {
       <AddDialog
         type={'folder'}
         onSubmit={handleAddFolder}
-        onClose={() => setOpenAddFolder(false)}
-        open={openAddFolder}
+        onClose={() => setAddFolderModalOpen(false)}
+        open={addFolderModalOpen}
+      />
+      <RenameDialog
+        type={'collection'}
+        initialValue={collectionName}
+        onSubmit={handleRenameCollection}
+        open={renameCollectionModalOpen}
+        onClose={() => setRenameCollectionModalOpen(false)}
       />
     </>
   );
@@ -162,7 +220,7 @@ interface StyledTreeNodeMenuProps extends MenuProps {
 
 export const StyledTreeNodeMenu = styled(Menu, {
   shouldForwardProp: (prop) => !['type'].includes(prop as string),
-})<StyledTreeNodeMenuProps>(({theme, type}) => ({
+})<StyledTreeNodeMenuProps>(({ theme, type }) => ({
   [`& .${menuClasses.list}`]: {
     padding: 0,
     [`& .${menuItemClasses.root}`]: {
@@ -176,17 +234,17 @@ export const StyledTreeNodeMenu = styled(Menu, {
   [`& .${menuClasses.paper}`]: {
     ...(type === 'collection'
       ? {
-        border: `1px solid ${alpha(theme.palette.warning.main, 0.5)}`,
-      }
+          border: `1px solid ${alpha(theme.palette.warning.main, 0.5)}`,
+        }
       : type === 'folder'
-        ? {
+      ? {
           border: `1px solid ${alpha(theme.palette.info.main, 0.5)}`,
         }
-        : type === 'query'
-          ? {
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-          }
-          : {}),
+      : type === 'query'
+      ? {
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+        }
+      : {}),
   },
 }));
 
@@ -196,7 +254,7 @@ interface StyledTreeNodeProps extends BoxProps {
 
 export const StyledTreeNode = styled(Box, {
   shouldForwardProp: (prop) => !['type'].includes(prop as string),
-})<StyledTreeNodeProps>(({theme, type}) => ({
+})<StyledTreeNodeProps>(({ theme, type }) => ({
   paddingLeft: 5,
   paddingRight: 5,
   display: 'flex',
@@ -213,33 +271,33 @@ export const StyledTreeNode = styled(Box, {
   marginTop: 2,
   ...(type === 'collection'
     ? {
-      borderColor: alpha(theme.palette.warning.main, 0.3),
-      backgroundColor: alpha(theme.palette.warning.main, 0.1),
-      '&:hover': {
-        backgroundColor: alpha(theme.palette.warning.main, 0.2),
-      },
-    }
+        borderColor: alpha(theme.palette.warning.main, 0.3),
+        backgroundColor: alpha(theme.palette.warning.main, 0.1),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.warning.main, 0.2),
+        },
+      }
     : type === 'folder'
-      ? {
+    ? {
         borderColor: alpha(theme.palette.info.main, 0.3),
         backgroundColor: alpha(theme.palette.info.main, 0.1),
         '&:hover': {
           backgroundColor: alpha(theme.palette.info.main, 0.2),
         },
       }
-      : type === 'query'
-        ? {
-          borderColor: alpha(theme.palette.primary.main, 0.3),
-          backgroundColor: alpha(theme.palette.primary.main, 0.1),
-          '&:hover': {
-            backgroundColor: alpha(theme.palette.primary.main, 0.3),
-          },
-        }
-        : {}),
+    : type === 'query'
+    ? {
+        borderColor: alpha(theme.palette.primary.main, 0.3),
+        backgroundColor: alpha(theme.palette.primary.main, 0.1),
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.3),
+        },
+      }
+    : {}),
 }));
 
 export const StyledNodeTypography = styled(Typography)<TypographyProps>(
-  ({theme}) => ({
+  ({ theme }) => ({
     marginLeft: '5px',
     fontSize: 14,
     whiteSpace: 'nowrap',
@@ -255,7 +313,7 @@ export const StyledNodeTypography = styled(Typography)<TypographyProps>(
 ) as typeof Typography;
 
 export const StyledNodeIconButton = styled(IconButton)<IconButtonProps>(
-  ({theme}) => ({
+  ({ theme }) => ({
     padding: 2,
     borderRadius: 4,
     [`& .${svgIconClasses.root}`]: {

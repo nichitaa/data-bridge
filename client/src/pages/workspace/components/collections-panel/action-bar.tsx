@@ -2,7 +2,7 @@ import {Box, BoxProps, Button, styled, TextField} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import {useRecoilValue} from 'recoil';
 import {workspaceChannelAtom} from '../../../../recoil/atoms';
-import AddDialog from '../add-dialog/add-dialog';
+import AddDialog from '../menu-dialog/add-dialog';
 import {useState} from 'react';
 import {notificationService} from '../../../../services';
 

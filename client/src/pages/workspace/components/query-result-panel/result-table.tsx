@@ -15,6 +15,7 @@ import {
   getFilterCountText,
   PROPERTY_FILTERING_I18N_CONSTANTS,
 } from '../../../../utils/table.utils';
+import { Typography } from '@mui/material';
 
 const ResultTable = () => {
   const currentQueryResults = useRecoilValue(currentQueryResultsAtom);
@@ -79,10 +80,12 @@ const ResultTable = () => {
 
   const filterCountText = getFilterCountText(filteredItemsCount);
 
+  if (items.length === 0)
+    return <Typography>Execute a query to inspect returned data</Typography>;
   return (
     <Table
       {...collectionProps}
-      variant={'container'}
+      variant={'embedded'}
       items={items}
       columnDefinitions={columnDefinitions}
       resizableColumns

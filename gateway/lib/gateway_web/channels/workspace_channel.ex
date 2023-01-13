@@ -22,6 +22,20 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, %{success: true, data: "from event_name reply"}}, socket}
   end
 
+  ## Workspace API
+
+  def handle_in("delete_workspace", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.delete_workspace_by_id(wp_id)
+
+    push(socket, "delete_workspace_response", response)
+
+    {:stop, :normal, socket}
+  end
+
   ## Collaborator API
 
   def handle_in("add_collaborator", params, socket) do

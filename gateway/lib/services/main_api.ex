@@ -51,7 +51,6 @@ defmodule GatewayWeb.Services.MainApi do
     |> get_response_body()
   end
 
-  # TODO: wait for fix
   def delete_resource(client, wp_id, payload) do
     Tesla.post(client, "/api/workspace/" <> wp_id <> "/delete-resource", payload)
     |> get_response_body()

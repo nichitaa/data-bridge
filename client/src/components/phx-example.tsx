@@ -25,7 +25,6 @@ export const PhxExample = () => {
 };
 
 const uniqId = Math.random().toString();
-console.log('myId: ', uniqId);
 
 export const PhxChannel = () => {
   const { disconnect } = usePhxSocket();

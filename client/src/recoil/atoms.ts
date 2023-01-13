@@ -139,3 +139,8 @@ export const currentQueryResultsAtom = atom<undefined | QueryResult>({
   key: 'currentQueryResultsAtom',
   default: undefined,
 });
+
+export const openedNodePathsAtom = atom<string[]>({
+  key: 'openedNodePathsAtom',
+  default: [],
+});

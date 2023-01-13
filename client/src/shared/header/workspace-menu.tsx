@@ -1,17 +1,37 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton, MenuItem, Typography } from '@mui/material';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { StyledMenu } from './user-menu';
 import WorkspaceDialog from './workspace-dialog';
 import EditTeamDialog from './edit-team-dialog';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { workspaceChannelAtom } from '../../recoil/atoms';
 
 const WorkspaceMenu = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
+  const channel = useRecoilValue(workspaceChannelAtom);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openTeamDialog, setOpenTeamDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (channel !== undefined) {
+      channel.on('delete_workspace_response', (payload) => {
+        console.log('delete_workspace_response: ', payload);
+        if (payload.success) {
+          // refresh
+          navigate(0);
+        }
+      });
+      return () => {
+        // clean up subscriptions refs
+        channel.off('delete_workspace_response');
+      };
+    }
+  }, [channel]);
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -29,6 +49,10 @@ const WorkspaceMenu = () => {
 
   const handleOpenTeamDialog = () => setOpenTeamDialog(true);
   const handleCloseTeamDialog = () => setOpenTeamDialog(false);
+
+  const handleDeleteWorkspace = () => {
+    channel?.push('delete_workspace', {});
+  };
 
   return (
     <>
@@ -71,6 +95,13 @@ const WorkspaceMenu = () => {
           <MenuItem onClick={handleOpenTeamDialog}>
             <Typography component={'div'} fontSize={'14px'} textAlign='center'>
               Edit team
+            </Typography>
+          </MenuItem>
+        )}
+        {workspaceId !== undefined && (
+          <MenuItem onClick={handleDeleteWorkspace}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Delete workspace
             </Typography>
           </MenuItem>
         )}

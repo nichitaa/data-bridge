@@ -13,7 +13,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
-import {useRecoilState, useRecoilValue, useSetRecoilState} from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentQueryResultsAtom,
   currentSelectedQueryDataAtom,
@@ -21,8 +21,8 @@ import {
   currentWorkspaceInfoAtom,
   workspaceChannelAtom,
 } from '../../../../recoil/atoms';
-import {notificationService} from '../../../../services';
-import {useEffect} from 'react';
+import { notificationService } from '../../../../services';
+import { useEffect } from 'react';
 
 const cls = generateUtilityClasses('EditorPanelActions', ['wrapper']);
 
@@ -33,6 +33,9 @@ const EditorPanelActions = () => {
   const setCurrentQueryResults = useSetRecoilState(currentQueryResultsAtom);
   const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
+  const queryId = currentSelectedQueryData?.id;
+  const folderId = currentSelectedQueryData?.folderId;
+  const collectionId = currentSelectedQueryData?.collectionId;
 
   /** clean-up - reset query results on workspace change */
   useEffect(() => {
@@ -49,6 +52,7 @@ const EditorPanelActions = () => {
     };
 
     channel?.push('run_query', request).receive('ok', (response) => {
+      console.log('response: ', response);
       if (response.success) {
         setCurrentQueryResults(response.data);
       } else {
@@ -59,6 +63,31 @@ const EditorPanelActions = () => {
         });
       }
     });
+  };
+
+  const handleDeleteQuery = () => {
+    channel
+      ?.push('delete_resource', {
+        id: queryId,
+        folderId,
+        collectionId,
+        type: 'query',
+      })
+      .receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            message: 'Query deleted!',
+            variant: 'success',
+            method: 'delete_resource',
+          });
+        } else {
+          notificationService.notify({
+            message: 'Could not delete query!',
+            variant: 'error',
+            method: 'delete_resource',
+          });
+        }
+      });
   };
 
   const handleFormatQuery = () => {
@@ -85,7 +114,7 @@ const EditorPanelActions = () => {
         folderId: currentSelectedQueryData.folderId,
         collectionId: currentSelectedQueryData.collectionId,
         rawSql: currentSqlQuery,
-        documentation: currentSelectedQueryData.documentation // todo
+        documentation: currentSelectedQueryData.documentation, // todo
       };
       channel?.push('update_query', request).receive('ok', (response) => {
         if (response.success) {
@@ -109,41 +138,41 @@ const EditorPanelActions = () => {
     <StyledEditorPanelActions className={cls.wrapper}>
       <Tooltip title={'Execute query'}>
         <StyledActionIconButton onClick={handleRunQuery} variant={'success'}>
-          <PlayCircleFilledIcon/>
+          <PlayCircleFilledIcon />
         </StyledActionIconButton>
       </Tooltip>
       <Tooltip onClick={handleFormatQuery} title={'Format query'}>
         <StyledActionIconButton variant={'info'}>
-          <LocalFloristOutlinedIcon/>
+          <LocalFloristOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
       <Tooltip title={'See documentation'}>
         <StyledActionIconButton variant={'info'}>
-          <BookOutlinedIcon/>
+          <BookOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
 
       <Tooltip onClick={handleSaveQuery} title={'Save query'}>
         <StyledActionIconButton variant={'success'}>
-          <SaveOutlinedIcon/>
+          <SaveOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
 
       <Tooltip title={'Pull updates'}>
         <StyledActionIconButton variant={'warning'}>
-          <SyncAltOutlinedIcon/>
+          <SyncAltOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
-      <Tooltip title={'Delete query'}>
+      <Tooltip onClick={handleDeleteQuery} title={'Delete query'}>
         <StyledActionIconButton variant={'error'}>
-          <DeleteOutlinedIcon/>
+          <DeleteOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
     </StyledEditorPanelActions>
   );
 };
 
-const StyledEditorPanelActions = styled(`div`)(({theme}) => ({
+const StyledEditorPanelActions = styled(`div`)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -156,42 +185,42 @@ interface StyledEditorPanelIconActionButtonProps extends IconButtonProps {
 
 export const StyledActionIconButton = styled(IconButton, {
   shouldForwardProp: (prop) => !['variant'].includes(prop as string),
-})<StyledEditorPanelIconActionButtonProps>(({theme, variant}) => ({
+})<StyledEditorPanelIconActionButtonProps>(({ theme, variant }) => ({
   borderRadius: 4,
   padding: 2,
   ...(variant === 'error'
     ? {
-      backgroundColor: alpha(theme.palette.error.main, 0.2),
-      color: theme.palette.error.main,
-      '&:hover': {
-        backgroundColor: alpha(theme.palette.error.main, 0.3),
-      },
-    }
+        backgroundColor: alpha(theme.palette.error.main, 0.2),
+        color: theme.palette.error.main,
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.error.main, 0.3),
+        },
+      }
     : variant === 'success'
-      ? {
+    ? {
         backgroundColor: alpha(theme.palette.success.main, 0.2),
         color: theme.palette.success.main,
         '&:hover': {
           backgroundColor: alpha(theme.palette.success.main, 0.3),
         },
       }
-      : variant === 'warning'
-        ? {
-          backgroundColor: alpha(theme.palette.warning.main, 0.2),
-          color: theme.palette.warning.main,
-          '&:hover': {
-            backgroundColor: alpha(theme.palette.warning.main, 0.3),
-          },
-        }
-        : variant === 'info'
-          ? {
-            backgroundColor: alpha(theme.palette.info.main, 0.2),
-            color: theme.palette.info.main,
-            '&:hover': {
-              backgroundColor: alpha(theme.palette.info.main, 0.3),
-            },
-          }
-          : {}),
+    : variant === 'warning'
+    ? {
+        backgroundColor: alpha(theme.palette.warning.main, 0.2),
+        color: theme.palette.warning.main,
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.warning.main, 0.3),
+        },
+      }
+    : variant === 'info'
+    ? {
+        backgroundColor: alpha(theme.palette.info.main, 0.2),
+        color: theme.palette.info.main,
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.info.main, 0.3),
+        },
+      }
+    : {}),
   [`& .${svgIconClasses.root}`]: {
     fontSize: 18,
   },
