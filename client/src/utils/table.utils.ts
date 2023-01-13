@@ -1,4 +1,3 @@
-
 export const PROPERTY_FILTERING_I18N_CONSTANTS = {
   filteringAriaLabel: 'your choice',
   dismissAriaLabel: 'Dismiss',

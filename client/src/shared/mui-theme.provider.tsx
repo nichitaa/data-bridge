@@ -16,7 +16,6 @@ import type {} from '@mui/lab/themeAugmentation';
 import { FC } from 'react';
 
 // in the file where you are creating the theme (invoking the function `createTheme()`)
-import { Theme } from '@mui/material/styles';
 import { ToastVariant } from './toast/toast.types';
 
 // https://mui.com/material-ui/migration/v5-style-changes/#%E2%9C%85-add-module-augmentation-for-defaulttheme-typescript

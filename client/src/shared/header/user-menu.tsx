@@ -1,5 +1,5 @@
-import {useRecoilState, useRecoilValue} from 'recoil';
-import {currentUserAtom, jwtAtom} from '../../recoil/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { currentUserAtom, jwtAtom } from '../../recoil/atoms';
 import {
   Avatar,
   Box,
@@ -10,10 +10,10 @@ import {
   styled,
   Typography,
 } from '@mui/material';
-import {MouseEvent, useEffect, useState} from 'react';
-import {useAuthHandlers} from '../../hooks/use-jwt-auth';
-import {authService, notificationService} from '../../services';
-import {TOAST_VARIANT} from '../toast/toast.types';
+import { MouseEvent, useEffect, useState } from 'react';
+import { useAuthHandlers } from '../../hooks/use-jwt-auth';
+import { authService, notificationService } from '../../services';
+import { TOAST_VARIANT } from '../toast/toast.types';
 
 const UserMenu = () => {
   const jwt = useRecoilValue(jwtAtom);
@@ -21,7 +21,7 @@ const UserMenu = () => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const {logout} = useAuthHandlers();
+  const { logout } = useAuthHandlers();
 
   useEffect(() => {
     (async () => {
@@ -49,7 +49,7 @@ const UserMenu = () => {
   };
 
   return (
-    <Box sx={{paddingLeft: '15px'}}>
+    <Box sx={{ paddingLeft: '15px' }}>
       <IconButton onClick={handleMenuOpen}>
         <Avatar
           sx={{
@@ -86,7 +86,7 @@ const UserMenu = () => {
   );
 };
 
-export const StyledMenu = styled(Menu)(({theme}) => ({
+export const StyledMenu = styled(Menu)(({ theme }) => ({
   [`& .${menuClasses.list}`]: {
     padding: 0,
   },
