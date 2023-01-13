@@ -2,8 +2,8 @@ import * as React from 'react';
 import { memo, ReactElement } from 'react';
 import {
   Box,
-  lighten,
   IconButton,
+  lighten,
   Paper,
   PaperProps,
   SvgIcon,
