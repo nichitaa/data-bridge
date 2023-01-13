@@ -1,7 +1,7 @@
-import MDEditor, { commands, MDEditorProps } from '@uiw/react-md-editor';
+import MDEditor, {commands, MDEditorProps} from '@uiw/react-md-editor';
 import rehypeSanitize from 'rehype-sanitize';
-import { useState } from 'react';
-import { Box } from '@mui/material';
+import {useState} from 'react';
+import {Box} from '@mui/material';
 
 // dark theme for markdown editor
 document.documentElement.setAttribute('data-color-mode', 'dark');
