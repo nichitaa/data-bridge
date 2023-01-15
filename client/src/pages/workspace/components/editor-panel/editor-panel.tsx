@@ -15,7 +15,13 @@ const EditorPanel = () => {
     useRecoilState(currentSqlQueryAtom);
 
   useEffect(() => {
-    setCurrentSqlQuery(currentSelectedQueryData?.rawSql ?? '');
+    if (currentSelectedQueryData !== undefined) {
+      setCurrentSqlQuery(currentSelectedQueryData?.rawSql ?? '');
+    } else {
+      setCurrentSqlQuery(
+        '/** \n  Select a query to start editing it! \n  You could also run any valid query over the workspace DB connection \n**/'
+      );
+    }
   }, [currentSelectedQueryData]);
 
   const onChange = useCallback((value, viewUpdate) => {

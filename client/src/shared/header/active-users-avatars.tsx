@@ -14,17 +14,17 @@ const ActiveUsersAvatars = () => {
     >
       {currentActiveUsers.map((user) => {
         const { metas } = user;
-        if (metas[0].user_id !== currentUser?.userId) {
+        if (metas?.[0].user_id !== currentUser?.userId) {
           return (
             <Avatar
-              key={metas[0].user_id}
+              key={metas?.[0].user_id}
               sx={{
                 maxWidth: 24,
                 height: 24,
                 backgroundColor: teal[500],
               }}
             >
-              {metas[0].user_name[0]}
+              {metas?.[0].user_email?.[0]}
             </Avatar>
           );
         }

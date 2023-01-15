@@ -36,6 +36,17 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:stop, :normal, socket}
   end
 
+  def handle_in("update_workspace", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.update_workspace_by_id(wp_id, params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
   ## Collaborator API
 
   def handle_in("add_collaborator", params, socket) do
@@ -167,7 +178,7 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:ok, _} =
       WorkspacePresence.track(socket, socket.assigns.user_id, %{
         user_id: socket.assigns.user_id,
-        user_name: socket.assigns.user_name,
+        user_email: socket.assigns.user_email,
         workspace_id: socket.assigns.workspace_id,
         online_at: inspect(System.system_time(:second))
       })

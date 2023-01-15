@@ -45,13 +45,6 @@ export const PhxChannel = () => {
     });
   }, [handlePresenceSync]);
 
-  useEffect(() => {
-    const subscriptionRef = handleChannelEvent('from_server', (payload) => {
-      console.log('[handleChannelEvent] from_server: ', payload);
-    });
-    return () => channel.off('from_server', subscriptionRef);
-  }, [handleChannelEvent]);
-
   const handlePush = () => {
     const pushInstance = push('event_name', {});
     pushInstance

@@ -14,6 +14,7 @@ import {
   allWorkspacesAtom,
   currentWorkspaceInfoAtom,
   jwtAtom,
+  workspaceChannelAtom,
 } from '../../recoil/atoms';
 import { dbService, mainService, notificationService } from '../../services';
 import { LoadingButton } from '@mui/lab';
@@ -28,6 +29,7 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
   const jwt = useRecoilValue(jwtAtom);
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
   const setAllWorkspaces = useSetRecoilState(allWorkspacesAtom);
+  const channel = useRecoilValue(workspaceChannelAtom);
 
   const [loading, setLoading] = useState(false);
   const [workspaceInfoForm, setWorkspaceInfoForm] = useState({
@@ -146,26 +148,28 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
     const isValid = await validateWorkspace();
     if (!isValid) return;
     setLoading(true);
-    // const updateResponse = await mainService.updateWorkspace(
-    //   jwt!,
-    //   currentWorkspaceInfo?.id!,
-    //   workspaceInfoForm
-    // );
-    // if (updateResponse.success) {
-    //   notificationService.notify({
-    //     variant: 'success',
-    //     message: 'Successfully updated workspace!',
-    //     method: 'update-wp',
-    //   });
-    //   await reFetchAllWorkspaces();
-    //   dialogProps?.onClose?.({}, 'escapeKeyDown');
-    // } else {
-    //   notificationService.notify({
-    //     variant: 'error',
-    //     method: 'update-wp',
-    //     message: `Could not update workspace!`,
-    //   });
-    // }
+    channel
+      ?.push('update_workspace', workspaceInfoForm)
+      .receive('ok', async (response) => {
+        if (response.success) {
+          notificationService.notify({
+            message: 'Workspace updated!',
+            variant: 'success',
+            method: 'update_workspace',
+          });
+          await reFetchAllWorkspaces();
+          dialogProps?.onClose?.({}, 'escapeKeyDown');
+        } else {
+          notificationService.notify({
+            message:
+              typeof response.error === 'string'
+                ? response.error
+                : 'Could not update workspace!',
+            variant: 'error',
+            method: 'update_workspace',
+          });
+        }
+      });
     setLoading(false);
   };
   return (

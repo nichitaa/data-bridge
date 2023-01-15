@@ -1,14 +1,28 @@
-import { Box, BoxProps, Button, styled, TextField } from '@mui/material';
+import {
+  alpha,
+  Box,
+  BoxProps,
+  InputAdornment,
+  styled,
+  TextField,
+  Tooltip,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../../../recoil/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  collectionSearchFilterAtom,
+  workspaceChannelAtom,
+} from '../../../../recoil/atoms';
 import AddDialog from '../menu-dialog/add-dialog';
 import { useState } from 'react';
 import { notificationService } from '../../../../services';
+import { StyledActionIconButton } from '../editor-panel/editor-panel-actions';
+import SearchIcon from '@mui/icons-material/Search';
 
 const ActionBar = () => {
   const channel = useRecoilValue(workspaceChannelAtom);
   const [openAddCollectionDialog, setOpenAddCollectionDialog] = useState(false);
+  const [search, setSearch] = useRecoilState(collectionSearchFilterAtom);
   const handleAddCollection = (name: string, clearStateName: () => void) => {
     if (name.trim() === '') {
       return notificationService.notify({
@@ -41,13 +55,36 @@ const ActionBar = () => {
   return (
     <>
       <StyledActionBar>
-        <Button
-          onClick={() => setOpenAddCollectionDialog(true)}
-          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-        >
-          Add
-        </Button>
-        <TextField autoComplete={'off'} placeholder={'Search'}></TextField>
+        <Tooltip title={'New collection'}>
+          <StyledActionIconButton
+            onClick={() => setOpenAddCollectionDialog(true)}
+            style={{
+              width: 30,
+              border: '1px solid red!important',
+            }}
+            variant={'primary'}
+          >
+            <AddIcon color={'primary'} />
+          </StyledActionIconButton>
+        </Tooltip>
+        <TextField
+          fullWidth
+          autoComplete={'off'}
+          placeholder={'search'}
+          value={search}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <SearchIcon
+                  sx={{
+                    color: (theme) => alpha(theme.palette.primary.main, 0.9),
+                  }}
+                />
+              </InputAdornment>
+            ),
+          }}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </StyledActionBar>
       <AddDialog
         type={'collection'}

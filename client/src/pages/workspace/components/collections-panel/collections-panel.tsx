@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { usePanelResize } from '../../../../hooks/use-panel-resize';
 import {
+  collectionSearchFilterAtom,
   collectionsPanelMaxSizeAtom,
   collectionsPanelMinSizeAtom,
   collectionsPanelSizeAtom,
@@ -26,6 +27,8 @@ import ActionBar from './action-bar';
 import SettingsEthernetOutlinedIcon from '@mui/icons-material/SettingsEthernetOutlined';
 import { StyledActionIconButton } from '../editor-panel/editor-panel-actions';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useParams } from 'react-router-dom';
+import Fuse from 'fuse.js';
 
 interface MainProps {
   dimensions: { height: number; width: number };
@@ -39,24 +42,25 @@ const cls = collectionPanelClasses;
 const CollectionsPanel = (props: MainProps) => {
   const theme = useTheme();
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
-  const [openedNodePaths, setOpenedNodePaths] =
-    useRecoilState(openedNodePathsAtom);
+  const setOpenedNodePaths = useSetRecoilState(openedNodePathsAtom);
   const setCurrentSelectedQueryData = useSetRecoilState(
     currentSelectedQueryDataAtom
   );
+  const [search, setSearch] = useRecoilState(collectionSearchFilterAtom);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   /** clean-up selected query node on workspaceId change */
   useEffect(() => {
-    if (currentWorkspaceInfo !== undefined) {
+    if (workspaceId !== undefined) {
       return () => {
         setCurrentSelectedQueryData(undefined);
       };
     }
-  }, [currentWorkspaceInfo]);
+  }, [workspaceId]);
 
   const collectionsData = useMemo(() => {
     if (currentWorkspaceInfo !== undefined) {
-      return currentWorkspaceInfo.collections.map((col) => {
+      const list = currentWorkspaceInfo.collections.map((col) => {
         const collectionFolders = col.folders.map((fol) => {
           const folderQueries = fol.queries.map((q) => {
             return { ...q, query: q.name };
@@ -65,15 +69,25 @@ const CollectionsPanel = (props: MainProps) => {
         });
         return { ...col, collection: col.name, children: collectionFolders };
       });
+
+      if (search.trim() === '') return list;
+
+      // filtered list
+      const fuse = new Fuse(list, {
+        includeScore: false,
+        keys: ['name', 'folders.name', 'folders.queries.name'],
+      });
+      return fuse.search(search).map((f) => ({ ...f.item }));
     }
     return [];
-  }, [currentWorkspaceInfo]);
+  }, [currentWorkspaceInfo, search]);
 
   const { maximizePanel } = usePanelResize({
     minSizeAtom: collectionsPanelMinSizeAtom,
     maxSizeAtom: collectionsPanelMaxSizeAtom,
     sizeAtom: collectionsPanelSizeAtom,
   });
+
   const { required, handlers, instance } = useTreeState({
     data: collectionsData,
     id: 'collections',
@@ -111,6 +125,17 @@ const CollectionsPanel = (props: MainProps) => {
     handlers.setSelected(node, selected);
   };
 
+  const handleSetOpen: HyperTreeViewProps['setOpen'] = (node) => {
+    const opened = node.options.opened;
+    const path = node.options.path;
+    if (!opened) {
+      setOpenedNodePaths((prev) => [...prev, path]);
+    } else {
+      setOpenedNodePaths((prev) => prev.filter((v) => v !== path));
+    }
+    handlers.setOpen(node);
+  };
+
   if (props.dimensions.width <= 35) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: '4px' }}>
@@ -135,16 +160,7 @@ const CollectionsPanel = (props: MainProps) => {
         classes={{
           selectedNodeWrapper: cls.selectedQuery,
         }}
-        setOpen={(node) => {
-          const opened = node.options.opened;
-          const path = node.options.path;
-          if (!opened) {
-            setOpenedNodePaths((prev) => [...prev, path]);
-          } else {
-            setOpenedNodePaths((prev) => prev.filter((v) => v !== path));
-          }
-          handlers.setOpen(node);
-        }}
+        setOpen={handleSetOpen}
         draggable={false}
         horizontalLineStyles={{
           stroke: theme.palette.primary.main,

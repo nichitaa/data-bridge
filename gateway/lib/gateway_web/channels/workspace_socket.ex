@@ -16,7 +16,7 @@ defmodule GatewayWeb.WorkspaceSocket do
     dbg("new connection - user_data: #{inspect(user_data)}")
 
     socket = assign(socket, :user_id, user_data["userId"])
-    socket = assign(socket, :user_name, user_data["userName"])
+    socket = assign(socket, :user_email, user_data["userEmail"])
 
     {:ok, socket}
   end

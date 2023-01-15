@@ -4,36 +4,33 @@ export interface Workspace {
 }
 
 export interface WorkspaceInfo {
-  $id: string;
+  collaborators: CollaboratorInfo[];
+  collections: CollectionInfo[];
+  dbConnectionString: string;
+  envVariables: string;
   id: string;
   name: string;
   userId: string;
-  collections: CollectionInfo[];
-  dbConnectionString: string;
-  documentation: string;
-  defaultConfigsForQueries?: null;
-  envVariables?: string;
-  inviteLink?: null;
-  users?: string;
-  usersLimit?: number;
-  usersList?: string[];
+}
+
+interface CollaboratorInfo {
+  role: string;
+  id: string;
+  userId: string;
+  email: string;
+  workspaceId: string;
 }
 
 interface CollectionInfo {
-  documentation: string;
   folders: FolderInfo[];
   id: string;
-  isFavorite: boolean;
   name: string;
-  shareLink: string;
-  workspace: { $ref: string };
   workspaceId: string;
 }
 
 interface FolderInfo {
   queries: QueryInfo[];
   collectionId: string;
-  documentation: string;
   id: string;
   name: string;
 }
@@ -47,7 +44,6 @@ export interface QueryInfo {
   name: string;
   rawSql: string;
   size: number | null;
-  query: string;
 }
 
 export interface QueryResult {
@@ -63,7 +59,7 @@ export interface QueryResult {
 export interface CurrentWorkspaceUserPresence {
   metas: Array<{
     workspace_id: string;
-    user_name: string;
+    user_email: string;
     user_id: string;
   }>;
 }

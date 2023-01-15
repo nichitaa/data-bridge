@@ -20,7 +20,6 @@ const WorkspaceMenu = () => {
   useEffect(() => {
     if (channel !== undefined) {
       channel.on('delete_workspace_response', (payload) => {
-        console.log('delete_workspace_response: ', payload);
         if (payload.success) {
           // refresh
           navigate(0);

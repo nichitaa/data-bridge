@@ -12,9 +12,9 @@ import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import BookOutlinedIcon from '@mui/icons-material/BookOutlined';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  currentQueryDocsAtom,
   currentQueryResultsAtom,
   currentSelectedQueryDataAtom,
   currentSqlQueryAtom,
@@ -30,6 +30,7 @@ const EditorPanelActions = () => {
   const channel = useRecoilValue(workspaceChannelAtom);
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
+  const currentQueryDocs = useRecoilValue(currentQueryDocsAtom);
   const setCurrentQueryResults = useSetRecoilState(currentQueryResultsAtom);
   const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
@@ -52,13 +53,12 @@ const EditorPanelActions = () => {
     };
 
     channel?.push('run_query', request).receive('ok', (response) => {
-      console.log('response: ', response);
       if (response.success) {
         setCurrentQueryResults(response.data);
       } else {
         notificationService.notify({
           variant: 'error',
-          message: 'Error at running query',
+          message: response.error,
           method: 'run_query',
         });
       }
@@ -114,7 +114,7 @@ const EditorPanelActions = () => {
         folderId: currentSelectedQueryData.folderId,
         collectionId: currentSelectedQueryData.collectionId,
         rawSql: currentSqlQuery,
-        documentation: currentSelectedQueryData.documentation, // todo
+        documentation: currentQueryDocs,
       };
       channel?.push('update_query', request).receive('ok', (response) => {
         if (response.success) {
@@ -134,6 +134,8 @@ const EditorPanelActions = () => {
     }
   };
 
+  const disabledQueryActionButtons = currentSelectedQueryData === undefined;
+
   return (
     <StyledEditorPanelActions className={cls.wrapper}>
       <Tooltip title={'Execute query'}>
@@ -146,27 +148,35 @@ const EditorPanelActions = () => {
           <LocalFloristOutlinedIcon />
         </StyledActionIconButton>
       </Tooltip>
-      <Tooltip title={'See documentation'}>
-        <StyledActionIconButton variant={'info'}>
-          <BookOutlinedIcon />
-        </StyledActionIconButton>
+      <Tooltip onClick={handleSaveQuery} title={'Save query SQL & docs'}>
+        <span>
+          <StyledActionIconButton
+            disabled={disabledQueryActionButtons}
+            variant={'success'}
+          >
+            <SaveOutlinedIcon />
+          </StyledActionIconButton>
+        </span>
       </Tooltip>
-
-      <Tooltip onClick={handleSaveQuery} title={'Save query'}>
-        <StyledActionIconButton variant={'success'}>
-          <SaveOutlinedIcon />
-        </StyledActionIconButton>
-      </Tooltip>
-
       <Tooltip title={'Pull updates'}>
-        <StyledActionIconButton variant={'warning'}>
-          <SyncAltOutlinedIcon />
-        </StyledActionIconButton>
+        <span>
+          <StyledActionIconButton
+            disabled={disabledQueryActionButtons}
+            variant={'warning'}
+          >
+            <SyncAltOutlinedIcon />
+          </StyledActionIconButton>
+        </span>
       </Tooltip>
       <Tooltip onClick={handleDeleteQuery} title={'Delete query'}>
-        <StyledActionIconButton variant={'error'}>
-          <DeleteOutlinedIcon />
-        </StyledActionIconButton>
+        <span>
+          <StyledActionIconButton
+            disabled={disabledQueryActionButtons}
+            variant={'error'}
+          >
+            <DeleteOutlinedIcon />
+          </StyledActionIconButton>
+        </span>
       </Tooltip>
     </StyledEditorPanelActions>
   );
@@ -180,7 +190,7 @@ const StyledEditorPanelActions = styled(`div`)(({ theme }) => ({
 }));
 
 interface StyledEditorPanelIconActionButtonProps extends IconButtonProps {
-  variant?: 'error' | 'success' | 'warning' | 'info';
+  variant?: 'error' | 'success' | 'warning' | 'info' | 'primary';
 }
 
 export const StyledActionIconButton = styled(IconButton, {
@@ -218,6 +228,14 @@ export const StyledActionIconButton = styled(IconButton, {
         color: theme.palette.info.main,
         '&:hover': {
           backgroundColor: alpha(theme.palette.info.main, 0.3),
+        },
+      }
+    : variant === 'primary'
+    ? {
+        backgroundColor: alpha(theme.palette.primary.main, 0.2),
+        color: theme.palette.info.main,
+        '&:hover': {
+          backgroundColor: alpha(theme.palette.primary.main, 0.3),
         },
       }
     : {}),

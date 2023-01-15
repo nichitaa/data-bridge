@@ -106,20 +106,6 @@ export const currentActiveUsersAtom = atom<CurrentWorkspaceUserPresence[]>({
   dangerouslyAllowMutability: true,
 });
 
-export const allWorkspaceCollaboratorsAtom = atom({
-  key: 'allWorkspaceCollaboratorsAtom',
-  default: [
-    {
-      email: 'John',
-      userId: '1234-1234-1234-0000',
-    },
-    {
-      email: 'George',
-      userId: '1234-1234-1234-0001',
-    },
-  ],
-});
-
 export const currentWorkspaceInfoAtom = atom<undefined | WorkspaceInfo>({
   key: 'currentWorkspaceInfoAtom',
   default: undefined,
@@ -135,6 +121,11 @@ export const currentSqlQueryAtom = atom<string>({
   default: '',
 });
 
+export const currentQueryDocsAtom = atom<string | undefined>({
+  key: 'currentQueryDocsAtom',
+  default: '',
+});
+
 export const currentQueryResultsAtom = atom<undefined | QueryResult>({
   key: 'currentQueryResultsAtom',
   default: undefined,
@@ -143,4 +134,9 @@ export const currentQueryResultsAtom = atom<undefined | QueryResult>({
 export const openedNodePathsAtom = atom<string[]>({
   key: 'openedNodePathsAtom',
   default: [],
+});
+
+export const collectionSearchFilterAtom = atom<string>({
+  key: 'collectionSearchFilterAtom',
+  default: '',
 });
