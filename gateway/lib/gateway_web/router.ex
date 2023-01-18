@@ -44,6 +44,7 @@ defmodule GatewayWeb.Router do
 
     scope "/db" do
       post "/test_connection", DbApiController, :test_connection
+      post "/export_to_csv", DbApiController, :export_to_csv
     end
   end
 

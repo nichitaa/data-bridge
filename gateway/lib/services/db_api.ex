@@ -1,5 +1,4 @@
 defmodule GatewayWeb.Services.DbApi do
-
   def test_connection(client, payload) do
     Tesla.post(client, "/api/Connector/VerifyDbConnection", payload) |> get_response_body()
   end
@@ -12,12 +11,16 @@ defmodule GatewayWeb.Services.DbApi do
     Tesla.post(client, "/api/Connector/FormatSqlQuery", payload) |> get_response_body()
   end
 
+  def export_to_csv(client, payload) do
+    Tesla.post(client, "/api/Connector/ExportQueryToCsv", payload) |> get_response_body()
+  end
+
   def client(token) do
     middleware = [
       Tesla.Middleware.Logger,
       Tesla.Middleware.KeepRequest,
       {Tesla.Middleware.JSON,
-        decode_content_types: ["application/problem+json", "application/json"]},
+       decode_content_types: ["application/problem+json", "application/json"]},
       {Tesla.Middleware.BaseUrl, Application.fetch_env!(:gateway, :db_api_service_base_url)},
       {Tesla.Middleware.BearerAuth, token: token},
       {Tesla.Middleware.Timeout, timeout: 4_000},
@@ -31,5 +34,4 @@ defmodule GatewayWeb.Services.DbApi do
   ## Privates
 
   defp get_response_body({:ok, %Tesla.Env{body: response_body}}), do: response_body
-
 end

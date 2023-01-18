@@ -6,6 +6,14 @@ interface DbServiceAPI {
     jwt: string,
     payload: { connectionString: string; dataBaseType: number }
   ) => Promise<APIResponse<boolean>>;
+  downloadCsv: (
+    jwt: string,
+    payload: {
+      connectionString: string;
+      dataBaseType: number;
+      queryString: string;
+    }
+  ) => Promise<Response>;
 }
 
 export class DbService implements DbServiceAPI {
@@ -33,5 +41,16 @@ export class DbService implements DbServiceAPI {
         authorization: `Bearer ${jwt}`,
       },
     }).then((res) => res.json());
+  };
+
+  public downloadCsv: DbServiceAPI['downloadCsv'] = async (jwt, payload) => {
+    return await fetch(`${this.baseUrl}/export_to_csv`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${jwt}`,
+      },
+    });
   };
 }
