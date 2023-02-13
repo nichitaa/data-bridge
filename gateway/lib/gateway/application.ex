@@ -7,9 +7,12 @@ defmodule Gateway.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      # HTTP client
+      {Finch, name: FinchClient},
       GatewayWeb.Telemetry,
       {Phoenix.PubSub, name: Gateway.PubSub},
-      GatewayWeb.Endpoint
+      GatewayWeb.Endpoint,
+      GatewayWeb.WorkspacePresence
     ]
 
     opts = [strategy: :one_for_one, name: Gateway.Supervisor]

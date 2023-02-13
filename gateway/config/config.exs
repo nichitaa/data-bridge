@@ -1,6 +1,12 @@
 # General application configuration
 import Config
 
+# General configs
+config :gateway,
+  auth_service_base_url: "http://localhost:8080",
+  main_api_service_base_url: "http://localhost:8081",
+  db_api_service_base_url: "http://localhost:8082"
+
 # Configures the endpoint
 config :gateway, GatewayWeb.Endpoint,
   url: [host: "localhost"],
@@ -16,6 +22,11 @@ config :gateway, GatewayWeb.Endpoint,
       max_connections: 16_384
     ]
   ]
+
+# Tesla config
+config :tesla,
+       :adapter,
+       {Tesla.Adapter.Finch, name: FinchClient}
 
 # Configures Elixir's Logger
 config :logger, :console,

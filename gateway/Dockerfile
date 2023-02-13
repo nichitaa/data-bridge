@@ -11,6 +11,7 @@ RUN mix local.hex --force &&  \
     mix local.rebar --force
 
 # Compile the project.
-RUN mix do compile
+RUN mix deps.get && \
+    mix do compile
 
 CMD ["/app/entrypoint.sh"]

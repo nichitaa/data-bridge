@@ -4,7 +4,7 @@ config :gateway, GatewayWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 9999],
   check_origin: false,
   code_reloader: true,
-  debug_errors: true,
+  debug_errors: false,
   # start Endpoint straight away with `mix run`
   server: true,
   secret_key_base: "Mh1ENB0Sqa/QHLUx1umXWvnvmBNayZxBWucJR5kTGJKonJxXzMndIEYtvyYMJjhK",

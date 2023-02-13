@@ -33,8 +33,7 @@ export const usePhxChannel = (params: Params) => {
   if (socketStatus !== PhxSocketStatus.OPEN)
     throw new Error('PhxSocketStatus must be `OPEN`');
 
-  if (!socket)
-    throw new Error(`Phoenix Socket is undefined`);
+  if (!socket) throw new Error(`Phoenix Socket is undefined`);
 
   const channelRef = useRef(socket.channel(channelName, channelParams));
 
