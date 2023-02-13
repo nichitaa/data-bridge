@@ -28,7 +28,14 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
-
+      
+ # Mailing Service API
+  mailing-service:
+    container_name: mailing_service
+    image: nicolaedockerid/mailingservice
+    ports:
+      - 8082:80
+      
   # Connector Service API
   connector-service:
     container_name: connector_service
