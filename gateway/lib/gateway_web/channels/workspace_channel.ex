@@ -164,7 +164,7 @@ defmodule GatewayWeb.WorkspaceChannel do
       |> MainApi.client()
       |> MainApi.get_workspace_by_id(id)
 
-    push(socket, "workspace_info", response)
+    broadcast(socket, "workspace_info", response)
 
     {:noreply, socket}
   end

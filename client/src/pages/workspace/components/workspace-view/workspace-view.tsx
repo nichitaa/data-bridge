@@ -44,10 +44,10 @@ const WorkspaceView = () => {
     subtopic: workspaceId,
     recoilAtom: workspaceChannelAtom,
   });
+  const channel = useRecoilValue(workspaceChannelAtom);
   const [workspaceInfo, setWorkspaceInfo] = useRecoilState(
     currentWorkspaceInfoAtom
   );
-  const channel = useRecoilValue(workspaceChannelAtom);
   const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);
 
