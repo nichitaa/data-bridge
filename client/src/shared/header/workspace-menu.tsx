@@ -1,12 +1,16 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton, MenuItem, Typography } from '@mui/material';
-import { MouseEvent, useEffect, useState } from 'react';
+import { MouseEvent, useEffect, useMemo, useState } from 'react';
 import { StyledMenu } from './user-menu';
 import WorkspaceDialog from './workspace-dialog';
 import EditTeamDialog from './edit-team-dialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../recoil/atoms';
+import {
+  currentUserAtom,
+  currentWorkspaceInfoAtom,
+  workspaceChannelAtom,
+} from '../../recoil/atoms';
 
 const WorkspaceMenu = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -16,6 +20,17 @@ const WorkspaceMenu = () => {
   const [openTeamDialog, setOpenTeamDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const currentUser = useRecoilValue(currentUserAtom);
+  const workspace = useRecoilValue(currentWorkspaceInfoAtom);
+
+  const isAdminUser = useMemo(() => {
+    if (workspace && currentUser) {
+      return workspace.collaborators.find(
+        (x) => x.email === currentUser.userEmail && x.role === 'Admin'
+      );
+    }
+    return false;
+  }, [workspace, currentUser]);
 
   useEffect(() => {
     if (channel !== undefined) {
@@ -83,26 +98,42 @@ const WorkspaceMenu = () => {
             Create workspace
           </Typography>
         </MenuItem>
-        {workspaceId !== undefined && (
-          <MenuItem onClick={handleOpenEditDialog}>
-            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
-              Edit workspace
-            </Typography>
-          </MenuItem>
-        )}
-        {workspaceId !== undefined && (
-          <MenuItem onClick={handleOpenTeamDialog}>
-            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
-              Edit team
-            </Typography>
-          </MenuItem>
-        )}
-        {workspaceId !== undefined && (
-          <MenuItem onClick={handleDeleteWorkspace}>
-            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
-              Delete workspace
-            </Typography>
-          </MenuItem>
+        {isAdminUser && (
+          <>
+            {workspaceId !== undefined && (
+              <MenuItem onClick={handleOpenEditDialog}>
+                <Typography
+                  component={'div'}
+                  fontSize={'14px'}
+                  textAlign='center'
+                >
+                  Edit workspace
+                </Typography>
+              </MenuItem>
+            )}
+            {workspaceId !== undefined && (
+              <MenuItem onClick={handleOpenTeamDialog}>
+                <Typography
+                  component={'div'}
+                  fontSize={'14px'}
+                  textAlign='center'
+                >
+                  Edit team
+                </Typography>
+              </MenuItem>
+            )}
+            {workspaceId !== undefined && (
+              <MenuItem onClick={handleDeleteWorkspace}>
+                <Typography
+                  component={'div'}
+                  fontSize={'14px'}
+                  textAlign='center'
+                >
+                  Delete workspace
+                </Typography>
+              </MenuItem>
+            )}
+          </>
         )}
       </StyledMenu>
       {/* Dialogs */}
