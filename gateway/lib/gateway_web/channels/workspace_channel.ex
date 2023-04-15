@@ -164,6 +164,17 @@ defmodule GatewayWeb.WorkspaceChannel do
       |> MainApi.client()
       |> MainApi.get_workspace_by_id(id)
 
+    schema =
+      socket.assigns.jwt
+      |> DbApi.client()
+      |> DbApi.db_scheme(%{
+        connectionString: response["data"]["dbConnectionString"],
+        dataBaseType: 1
+      })
+
+    tables = schema["data"]["tables"]
+    response = put_in(response, Enum.map(["data", "schema"], &Access.key(&1, %{})), tables)
+
     broadcast(socket, "workspace_info", response)
 
     {:noreply, socket}

@@ -1,5 +1,5 @@
 import CodeMirror from '@uiw/react-codemirror';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { styled } from '@mui/material';
 import { githubDark } from '@uiw/codemirror-themes-all';
 import { PostgreSQL, sql } from '@codemirror/lang-sql';
@@ -7,12 +7,26 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   currentSelectedQueryDataAtom,
   currentSqlQueryAtom,
+  currentWorkspaceInfoAtom,
 } from '../../../../recoil/atoms';
 
 const EditorPanel = () => {
   const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
+  const workspace = useRecoilValue(currentWorkspaceInfoAtom);
+
+  const schema = useMemo(
+    () =>
+      (workspace?.schema ?? []).reduce<Record<string, string[]>>(
+        (acc, curr) => {
+          acc[curr.tableName] = curr.columns;
+          return acc;
+        },
+        {}
+      ),
+    [workspace]
+  );
 
   useEffect(() => {
     if (currentSelectedQueryData !== undefined) {
@@ -53,10 +67,7 @@ const EditorPanel = () => {
           sql({
             dialect: PostgreSQL,
             upperCaseKeywords: false,
-            schema: {
-              users: ['name', 'id', 'address'],
-              products: ['name', 'cost', 'description'],
-            },
+            schema,
           }),
         ]}
         onChange={onChange}

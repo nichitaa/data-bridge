@@ -15,6 +15,10 @@ defmodule GatewayWeb.Services.DbApi do
     Tesla.post(client, "/api/Connector/ExportQueryToCsv", payload) |> get_response_body()
   end
 
+  def db_scheme(client, payload) do
+    Tesla.post(client, "/api/Connector/DbScheme", payload) |> get_response_body()
+  end
+
   def client(token) do
     middleware = [
       Tesla.Middleware.Logger,

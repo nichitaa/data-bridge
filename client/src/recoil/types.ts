@@ -6,6 +6,10 @@ export interface Workspace {
 export interface WorkspaceInfo {
   collaborators: CollaboratorInfo[];
   collections: CollectionInfo[];
+  schema: {
+    tableName: string;
+    columns: string[];
+  }[];
   dbConnectionString: string;
   envVariables: string;
   id: string;
