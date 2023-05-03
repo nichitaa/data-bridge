@@ -30,7 +30,7 @@ const ResultPanelHeader = () => {
     downloadFile(() =>
       dbService.downloadCsv(jwt!, {
         connectionString: workspace!.dbConnectionString,
-        dataBaseType: 1,
+        dataBaseType: workspace?.dataBaseType!,
         queryString: sql,
       })
     );

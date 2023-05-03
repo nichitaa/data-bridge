@@ -6,6 +6,8 @@ import {
   DialogContentText,
   DialogProps,
   DialogTitle,
+  MenuItem,
+  Select,
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -34,6 +36,7 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
   const [loading, setLoading] = useState(false);
   const [workspaceInfoForm, setWorkspaceInfoForm] = useState({
     name: '',
+    dataBaseType: 0,
     dbConnectionString: '',
     envVariables: '',
   });
@@ -44,6 +47,7 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
         name: currentWorkspaceInfo?.name,
         dbConnectionString: currentWorkspaceInfo?.dbConnectionString,
         envVariables: currentWorkspaceInfo?.envVariables ?? '',
+        dataBaseType: currentWorkspaceInfo.dataBaseType,
       });
     }
   }, [type, currentWorkspaceInfo]);
@@ -55,12 +59,14 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
         name: currentWorkspaceInfo?.name!,
         dbConnectionString: currentWorkspaceInfo?.dbConnectionString!,
         envVariables: currentWorkspaceInfo?.envVariables ?? '',
+        dataBaseType: currentWorkspaceInfo?.dataBaseType!,
       });
     } else {
       setWorkspaceInfoForm({
         name: '',
         dbConnectionString: '',
         envVariables: '',
+        dataBaseType: 0,
       });
     }
     dialogProps?.onClose?.(event, reason);
@@ -76,7 +82,7 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
   const handleTestConnection = async () => {
     const request = {
       connectionString: workspaceInfoForm.dbConnectionString!,
-      dataBaseType: 1, // pg
+      dataBaseType: workspaceInfoForm.dataBaseType,
     };
     setLoading(true);
     const response = await dbService.testConnection(jwt!, request);
@@ -172,6 +178,7 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
       });
     setLoading(false);
   };
+
   return (
     <Dialog {...dialogProps} onClose={handleOnClose} maxWidth={'sm'} fullWidth>
       <DialogTitle>
@@ -190,6 +197,30 @@ const WorkspaceDialog = (props: WorkspaceDialog) => {
             autoFocus
             fullWidth
           />
+          <Select
+            value={workspaceInfoForm.dataBaseType}
+            onChange={(e) => {
+              handleOnFieldChange('dataBaseType', e.target.value as string);
+            }}
+            placeholder={'Database type'}
+            size={'small'}
+          >
+            <MenuItem key={'MySQL'} value={0}>
+              MySQL
+            </MenuItem>
+            <MenuItem key={'Postgres'} value={1}>
+              Postgres
+            </MenuItem>
+            <MenuItem key={'SQLite'} value={2}>
+              SQLite
+            </MenuItem>
+            <MenuItem key={'Oracle'} value={3}>
+              Oracle
+            </MenuItem>
+            <MenuItem key={'MSSQL'} value={4}>
+              MS SQL
+            </MenuItem>
+          </Select>
           <TextField
             autoComplete={'off'}
             value={workspaceInfoForm.dbConnectionString}

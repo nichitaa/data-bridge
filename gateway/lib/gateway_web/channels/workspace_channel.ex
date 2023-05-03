@@ -169,7 +169,7 @@ defmodule GatewayWeb.WorkspaceChannel do
       |> DbApi.client()
       |> DbApi.db_scheme(%{
         connectionString: response["data"]["dbConnectionString"],
-        dataBaseType: 1
+        dataBaseType: response["data"]["dataBaseType"]
       })
 
     tables = schema["data"]["tables"]

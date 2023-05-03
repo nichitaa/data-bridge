@@ -98,42 +98,27 @@ const WorkspaceMenu = () => {
             Create workspace
           </Typography>
         </MenuItem>
-        {isAdminUser && (
-          <>
-            {workspaceId !== undefined && (
-              <MenuItem onClick={handleOpenEditDialog}>
-                <Typography
-                  component={'div'}
-                  fontSize={'14px'}
-                  textAlign='center'
-                >
-                  Edit workspace
-                </Typography>
-              </MenuItem>
-            )}
-            {workspaceId !== undefined && (
-              <MenuItem onClick={handleOpenTeamDialog}>
-                <Typography
-                  component={'div'}
-                  fontSize={'14px'}
-                  textAlign='center'
-                >
-                  Edit team
-                </Typography>
-              </MenuItem>
-            )}
-            {workspaceId !== undefined && (
-              <MenuItem onClick={handleDeleteWorkspace}>
-                <Typography
-                  component={'div'}
-                  fontSize={'14px'}
-                  textAlign='center'
-                >
-                  Delete workspace
-                </Typography>
-              </MenuItem>
-            )}
-          </>
+
+        {isAdminUser && workspaceId !== undefined && (
+          <MenuItem onClick={handleOpenEditDialog}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Edit workspace
+            </Typography>
+          </MenuItem>
+        )}
+        {isAdminUser && workspaceId !== undefined && (
+          <MenuItem onClick={handleOpenTeamDialog}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Edit team
+            </Typography>
+          </MenuItem>
+        )}
+        {isAdminUser && workspaceId !== undefined && (
+          <MenuItem onClick={handleDeleteWorkspace}>
+            <Typography component={'div'} fontSize={'14px'} textAlign='center'>
+              Delete workspace
+            </Typography>
+          </MenuItem>
         )}
       </StyledMenu>
       {/* Dialogs */}

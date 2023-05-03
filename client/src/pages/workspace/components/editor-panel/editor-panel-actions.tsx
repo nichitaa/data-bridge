@@ -47,7 +47,7 @@ const EditorPanelActions = () => {
     const request = {
       connectionString: currentWorkspaceInfo?.dbConnectionString!,
       queryString: currentSqlQuery,
-      dataBaseType: 1,
+      dataBaseType: currentWorkspaceInfo?.dataBaseType,
       pageSize: 10,
       pageNumber: 1,
     };

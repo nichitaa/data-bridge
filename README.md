@@ -6,6 +6,9 @@
 # build and start all docker `services`
 docker compose up --build
 
+# pull latest image from hub
+docker compose pull SERVICE_NAME
+
 # clean-up (powershell)
 docker rmi -f $(docker images -aq)
 docker rm -f $(docker ps -a -q)

@@ -5,6 +5,7 @@ export interface Workspace {
 
 export interface WorkspaceInfo {
   collaborators: CollaboratorInfo[];
+  dataBaseType: number;
   collections: CollectionInfo[];
   schema: {
     tableName: string;
