@@ -1,24 +1,25 @@
-import { currentQueryResultsAtom } from '../../../../recoil/atoms';
-import { useRecoilValue } from 'recoil';
+import {
+  currentQueryResultsAtom,
+  currentSqlQueryAtom,
+  currentWorkspaceInfoAtom,
+  workspaceChannelAtom,
+} from '../../../../recoil/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useMemo } from 'react';
-import {
-  Pagination,
-  PropertyFilter,
-  Table,
-  TableProps,
-} from '@cloudscape-design/components';
-import {
-  PropertyFilterProperty,
-  useCollection,
-} from '@cloudscape-design/collection-hooks';
-import {
-  getFilterCountText,
-  PROPERTY_FILTERING_I18N_CONSTANTS,
-} from '../../../../utils/table.utils';
+import { Pagination, Table, TableProps } from '@cloudscape-design/components';
 import { Typography } from '@mui/material';
+import { notificationService } from '../../../../services';
+import { produce } from 'immer';
 
 const ResultTable = () => {
   const currentQueryResults = useRecoilValue(currentQueryResultsAtom);
+  const channel = useRecoilValue(workspaceChannelAtom);
+  const [currentSqlQuery, setCurrentSqlQuery] =
+    useRecoilState(currentSqlQueryAtom);
+  const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
+  const [queryResults, setCurrentQueryResults] = useRecoilState(
+    currentQueryResultsAtom
+  );
 
   const data: Record<string, string>[] = useMemo(() => {
     return (
@@ -50,53 +51,50 @@ const ResultTable = () => {
     }));
   }, [currentQueryResults]);
 
-  const filteringProperties: PropertyFilterProperty[] = useMemo(() => {
-    if (currentQueryResults === undefined) return [];
-    const firstRecord = currentQueryResults.results?.[0] ?? {};
-    return (
-      Object.keys(firstRecord).map((colName) => ({
-        propertyLabel: colName,
-        key: colName,
-        groupValuesLabel: colName,
-        operators: [':', '!:', '=', '!='],
-      })) ?? []
+  const handlePaginateCurrentQuery = (pageNumber: number) => {
+    const request = {
+      connectionString: currentWorkspaceInfo?.dbConnectionString!,
+      queryString: currentSqlQuery,
+      dataBaseType: currentWorkspaceInfo?.dataBaseType,
+      pageSize: 10,
+      pageNumber,
+    };
+    setCurrentQueryResults(
+      produce((draft) => {
+        if (draft) draft.loading = true;
+      })
     );
-  }, [currentQueryResults]);
+    channel?.push('run_query', request).receive('ok', (response) => {
+      if (response.success) {
+        setCurrentQueryResults(response.data);
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: response.error,
+          method: 'run_query',
+        });
+      }
+    });
+  };
 
-  const useCollectionResult = useCollection(data, {
-    pagination: { pageSize: 5 },
-    propertyFiltering: { filteringProperties: filteringProperties },
-    filtering: {},
-    sorting: {},
-  });
-
-  const {
-    collectionProps,
-    items,
-    paginationProps,
-    filteredItemsCount,
-    propertyFilterProps,
-  } = useCollectionResult;
-
-  const filterCountText = getFilterCountText(filteredItemsCount);
-
-  if (items.length === 0)
+  if (data.length === 0)
     return <Typography>Execute a query to inspect returned data</Typography>;
+
   return (
     <Table
-      {...collectionProps}
-      variant={'embedded'}
-      items={items}
+      items={data}
+      sortingDisabled
       columnDefinitions={columnDefinitions}
       resizableColumns
-      // TODO: handle pagination
-      pagination={<Pagination {...paginationProps} />}
-      filter={
-        <PropertyFilter
-          i18nStrings={PROPERTY_FILTERING_I18N_CONSTANTS}
-          countText={filterCountText}
-          {...propertyFilterProps}
-          expandToViewport
+      loading={queryResults?.loading}
+      loadingText={'Running query...'}
+      pagination={
+        <Pagination
+          currentPageIndex={currentQueryResults?.currentPage ?? 1}
+          pagesCount={currentQueryResults?.totalPages ?? 0}
+          onChange={({ detail: { currentPageIndex } }) =>
+            handlePaginateCurrentQuery(currentPageIndex)
+          }
         />
       }
     />

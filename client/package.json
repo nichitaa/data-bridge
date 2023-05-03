@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@cloudscape-design/components": "^3.0.169",
-    "@cloudscape-design/global-styles": "^1.0.7",
+    "@cloudscape-design/components": "^3.0.267",
+    "@cloudscape-design/global-styles": "^1.0.9",
     "@codemirror/lang-sql": "^6.3.1",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -29,7 +29,9 @@
     "dayjs": "^1.11.5",
     "file-saver": "^2.0.5",
     "fuse.js": "^6.6.2",
+    "immer": "^10.0.1",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "observable-hooks": "^4.2.1",
     "phoenix": "^1.6.13",
     "react": "^17.0.2",
@@ -46,6 +48,7 @@
     "rxjs-hooks": "^0.8.0-alpha.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/phoenix": "^1.5.4",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.2",

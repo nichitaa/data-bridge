@@ -31,7 +31,9 @@ const EditorPanelActions = () => {
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
   const currentQueryDocs = useRecoilValue(currentQueryDocsAtom);
-  const setCurrentQueryResults = useSetRecoilState(currentQueryResultsAtom);
+  const [currentQueryResults, setCurrentQueryResults] = useRecoilState(
+    currentQueryResultsAtom
+  );
   const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
   const queryId = currentSelectedQueryData?.id;
@@ -48,8 +50,8 @@ const EditorPanelActions = () => {
       connectionString: currentWorkspaceInfo?.dbConnectionString!,
       queryString: currentSqlQuery,
       dataBaseType: currentWorkspaceInfo?.dataBaseType,
-      pageSize: 10,
-      pageNumber: 1,
+      pageSize: currentQueryResults?.pageSize ?? 10,
+      pageNumber: currentQueryResults?.currentPage ?? 1,
     };
 
     channel?.push('run_query', request).receive('ok', (response) => {

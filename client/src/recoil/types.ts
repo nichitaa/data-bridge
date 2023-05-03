@@ -59,6 +59,7 @@ export interface QueryResult {
   results: Record<string, string>[];
   totalCount: number;
   totalPages: number;
+  loading?: boolean
 }
 
 export interface CurrentWorkspaceUserPresence {
