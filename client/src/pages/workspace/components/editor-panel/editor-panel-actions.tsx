@@ -1,17 +1,31 @@
 import {
   alpha,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   generateUtilityClasses,
   IconButton,
   IconButtonProps,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   styled,
   svgIconClasses,
+  TextField,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import UpdateIcon from '@mui/icons-material/Update';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentQueryDocsAtom,
@@ -22,20 +36,35 @@ import {
   workspaceChannelAtom,
 } from '../../../../recoil/atoms';
 import { notificationService } from '../../../../services';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import _ from 'lodash';
+import { produce } from 'immer';
+import { blueGrey } from '@mui/material/colors';
 
 const cls = generateUtilityClasses('EditorPanelActions', ['wrapper']);
+
+const cronJobModalDefaultState: {
+  open: boolean;
+  collaborators: string[];
+  expression: string;
+} = {
+  open: false,
+  collaborators: [],
+  expression: '',
+};
 
 const EditorPanelActions = () => {
   const channel = useRecoilValue(workspaceChannelAtom);
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
+  const [cronJobModal, setCronJobModal] = useState(cronJobModalDefaultState);
   const currentQueryDocs = useRecoilValue(currentQueryDocsAtom);
   const [currentQueryResults, setCurrentQueryResults] = useRecoilState(
     currentQueryResultsAtom
   );
-  const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
-  const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
+  const [currentSelectedQueryData, setCurrentSelectedQueryData] =
+    useRecoilState(currentSelectedQueryDataAtom);
+  const workspace = useRecoilValue(currentWorkspaceInfoAtom);
   const queryId = currentSelectedQueryData?.id;
   const folderId = currentSelectedQueryData?.folderId;
   const collectionId = currentSelectedQueryData?.collectionId;
@@ -43,15 +72,16 @@ const EditorPanelActions = () => {
   /** clean-up - reset query results on workspace change */
   useEffect(() => {
     setCurrentQueryResults(undefined);
-  }, [currentWorkspaceInfo]);
+  }, [workspace]);
 
-  const handleRunQuery = () => {
+  const handleRunQuery = (enableAI: boolean) => {
     const request = {
-      connectionString: currentWorkspaceInfo?.dbConnectionString!,
+      connectionString: workspace?.dbConnectionString!,
       queryString: currentSqlQuery,
-      dataBaseType: currentWorkspaceInfo?.dataBaseType,
+      dataBaseType: workspace?.dataBaseType,
       pageSize: currentQueryResults?.pageSize ?? 10,
       pageNumber: currentQueryResults?.currentPage ?? 1,
+      enableAI,
     };
 
     channel?.push('run_query', request).receive('ok', (response) => {
@@ -136,51 +166,198 @@ const EditorPanelActions = () => {
     }
   };
 
+  const handleCronJobCollaboratorsChange = (
+    event: SelectChangeEvent<string[]>
+  ) => {
+    const {
+      target: { value },
+    } = event;
+    setCronJobModal(
+      produce((draft) => {
+        if (typeof value === 'string') {
+          draft.collaborators = value.split(',');
+        } else {
+          draft.collaborators = value;
+        }
+      })
+    );
+  };
+
+  const handleSyncQuery = () => {
+    const collection = workspace?.collections?.find(
+      (x) => x.id === currentSelectedQueryData?.collectionId
+    );
+    const folder = collection?.folders?.find(
+      (x) => x.id === currentSelectedQueryData?.folderId
+    );
+    const query = folder?.queries?.find(
+      (x) => x.id === currentSelectedQueryData?.id
+    );
+    if (query) setCurrentSelectedQueryData(query);
+  };
+
   const disabledQueryActionButtons = currentSelectedQueryData === undefined;
 
   return (
-    <StyledEditorPanelActions className={cls.wrapper}>
-      <Tooltip title={'Execute query'}>
-        <StyledActionIconButton onClick={handleRunQuery} variant={'success'}>
-          <PlayCircleFilledIcon />
-        </StyledActionIconButton>
-      </Tooltip>
-      <Tooltip onClick={handleFormatQuery} title={'Format query'}>
-        <StyledActionIconButton variant={'info'}>
-          <LocalFloristOutlinedIcon />
-        </StyledActionIconButton>
-      </Tooltip>
-      <Tooltip onClick={handleSaveQuery} title={'Save query SQL & docs'}>
-        <span>
+    <>
+      <StyledEditorPanelActions className={cls.wrapper}>
+        <Tooltip title={'Execute query'}>
           <StyledActionIconButton
-            disabled={disabledQueryActionButtons}
+            onClick={() => handleRunQuery(false)}
             variant={'success'}
           >
-            <SaveOutlinedIcon />
+            <PlayCircleFilledIcon />
           </StyledActionIconButton>
-        </span>
-      </Tooltip>
-      <Tooltip title={'Pull updates'}>
-        <span>
+        </Tooltip>
+        <Tooltip title={'Execute query (AI enhanced)'}>
           <StyledActionIconButton
-            disabled={disabledQueryActionButtons}
-            variant={'warning'}
+            onClick={() => handleRunQuery(true)}
+            variant={'success'}
           >
-            <SyncAltOutlinedIcon />
+            <PsychologyIcon />
           </StyledActionIconButton>
-        </span>
-      </Tooltip>
-      <Tooltip onClick={handleDeleteQuery} title={'Delete query'}>
-        <span>
-          <StyledActionIconButton
-            disabled={disabledQueryActionButtons}
-            variant={'error'}
+        </Tooltip>
+        <Tooltip onClick={handleFormatQuery} title={'Format query'}>
+          <StyledActionIconButton variant={'info'}>
+            <LocalFloristOutlinedIcon />
+          </StyledActionIconButton>
+        </Tooltip>
+        <Tooltip
+          onClick={() =>
+            setCronJobModal(
+              produce((draft) => {
+                draft.open = true;
+              })
+            )
+          }
+          title={'Cron job'}
+        >
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'info'}
+            >
+              <UpdateIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
+        <Tooltip onClick={handleSaveQuery} title={'Save query SQL & docs'}>
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'success'}
+            >
+              <SaveOutlinedIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
+        <Tooltip onClose={handleSyncQuery} title={'Pull updates'}>
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'warning'}
+            >
+              <SyncAltOutlinedIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
+        <Tooltip onClick={handleDeleteQuery} title={'Delete query'}>
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'error'}
+            >
+              <DeleteOutlinedIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
+      </StyledEditorPanelActions>
+      <Dialog
+        open={cronJobModal.open}
+        fullWidth
+        maxWidth={'xs'}
+        onClose={() => setCronJobModal({ ...cronJobModalDefaultState })}
+      >
+        <DialogTitle>Cron job</DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+        >
+          <TextField
+            autoFocus
+            required
+            value={cronJobModal.expression}
+            onChange={(e) =>
+              setCronJobModal(
+                produce((draft) => {
+                  draft.expression = e.target.value;
+                })
+              )
+            }
+            placeholder={`Cron expression (e.g.: 0 15 10 ? * *)`}
+            autoComplete={'off'}
+          />
+          <Select
+            value={cronJobModal.collaborators}
+            multiple
+            onChange={handleCronJobCollaboratorsChange}
+            displayEmpty
+            size={'small'}
+            renderValue={(selected) => {
+              if (_.isEmpty(selected)) {
+                return (
+                  <Typography variant={'body1'} fontStyle={'italic'}>
+                    Collaborators
+                  </Typography>
+                );
+              }
+              return (
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {selected.map((value) => (
+                    <Chip key={value} label={value} />
+                  ))}
+                </Box>
+              );
+            }}
           >
-            <DeleteOutlinedIcon />
-          </StyledActionIconButton>
-        </span>
-      </Tooltip>
-    </StyledEditorPanelActions>
+            {workspace?.collaborators?.map((x) => (
+              <MenuItem key={x.email} value={x.email}>
+                {x.email}
+              </MenuItem>
+            ))}
+            <MenuItem key={'olss@gmail.com'} value={'olss@gmail.com'}>
+              olss@gmail.com
+            </MenuItem>
+            <MenuItem key={'Sam@gmail.com'} value={'Sam@gmail.com'}>
+              Sam@gmail.com
+            </MenuItem>
+          </Select>
+          <Typography color={blueGrey.A200} variant={'caption'}>
+            When cron job will be triggered (based on cron expression), the
+            current query will be executed and results will be sent to the
+            selected collaborators emails (in .csv format)
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              console.log('cron to create: ', cronJobModal);
+            }}
+            disabled={true}
+            color={'error'}
+          >
+            Delete
+          </Button>
+          <Button
+            onClick={() => {
+              console.log('cron to create: ', cronJobModal);
+            }}
+            variant={'contained'}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

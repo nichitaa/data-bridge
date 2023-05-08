@@ -92,7 +92,7 @@ const CollectionsPanel = (props: MainProps) => {
     data: collectionsData,
     id: 'collections',
     multipleSelect: false,
-    defaultOpened: false,
+    defaultOpened: true,
     idKey: 'id',
     childrenKey: 'children',
   });

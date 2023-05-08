@@ -75,7 +75,6 @@ const WorkspaceMenu = () => {
         color='inherit'
         aria-label='menu'
         onClick={handleMenuOpen}
-        sx={{ mr: 2 }}
       >
         <MenuIcon />
       </IconButton>

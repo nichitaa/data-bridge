@@ -1,20 +1,25 @@
 import CodeMirror from '@uiw/react-codemirror';
-import { useCallback, useEffect, useMemo } from 'react';
+import { KeyboardEventHandler, useCallback, useEffect, useMemo } from 'react';
 import { styled } from '@mui/material';
 import { githubDark } from '@uiw/codemirror-themes-all';
-import { PostgreSQL, sql } from '@codemirror/lang-sql';
+import { PostgreSQL, MySQL, MSSQL, SQLite, sql } from '@codemirror/lang-sql';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
+  currentQueryDocsAtom,
   currentSelectedQueryDataAtom,
   currentSqlQueryAtom,
   currentWorkspaceInfoAtom,
+  workspaceChannelAtom,
 } from '../../../../recoil/atoms';
+import { notificationService } from '../../../../services';
 
 const EditorPanel = () => {
   const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
   const workspace = useRecoilValue(currentWorkspaceInfoAtom);
+  const currentQueryDocs = useRecoilValue(currentQueryDocsAtom);
+  const channel = useRecoilValue(workspaceChannelAtom);
 
   const schema = useMemo(
     () =>
@@ -27,6 +32,13 @@ const EditorPanel = () => {
       ),
     [workspace]
   );
+
+  const sqlDialect = useMemo(() => {
+    if (workspace?.dataBaseType === 0) return MySQL;
+    if (workspace?.dataBaseType === 2) return SQLite;
+    if (workspace?.dataBaseType === 4) return MSSQL;
+    return PostgreSQL;
+  }, [workspace?.dataBaseType]);
 
   useEffect(() => {
     if (currentSelectedQueryData !== undefined) {
@@ -41,6 +53,41 @@ const EditorPanel = () => {
   const onChange = useCallback((value, viewUpdate) => {
     setCurrentSqlQuery(value);
   }, []);
+
+  const handleOnKeyDown: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault();
+      handleSaveQuery();
+      return;
+    }
+  };
+
+  const handleSaveQuery = () => {
+    if (currentSelectedQueryData !== undefined) {
+      const request = {
+        queryId: currentSelectedQueryData.id,
+        folderId: currentSelectedQueryData.folderId,
+        collectionId: currentSelectedQueryData.collectionId,
+        rawSql: currentSqlQuery,
+        documentation: currentQueryDocs,
+      };
+      channel?.push('update_query', request).receive('ok', (response) => {
+        if (response.success) {
+          notificationService.notify({
+            variant: 'success',
+            message: response.message,
+            method: 'save_query_raw_sql',
+          });
+        } else {
+          notificationService.notify({
+            variant: 'error',
+            message: 'Could not update query',
+            method: 'save_query_raw_sql',
+          });
+        }
+      });
+    }
+  };
 
   return (
     <StyledEditorWrapper>
@@ -65,11 +112,12 @@ const EditorPanel = () => {
         height={'100%'}
         extensions={[
           sql({
-            dialect: PostgreSQL,
+            dialect: sqlDialect,
             upperCaseKeywords: false,
             schema,
           }),
         ]}
+        onKeyDown={handleOnKeyDown}
         onChange={onChange}
       />
     </StyledEditorWrapper>

@@ -9,10 +9,18 @@ import {
   StyledTreeNode,
   StyledTreeNodeMenu,
 } from './collection-tree-node';
-import React, { MouseEvent, MouseEventHandler, useState } from 'react';
+import React, {
+  MouseEvent,
+  MouseEventHandler,
+  useEffect,
+  useState,
+} from 'react';
 import { notificationService } from '../../../../../services';
-import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../../../../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  openedNodePathsAtom,
+  workspaceChannelAtom,
+} from '../../../../../recoil/atoms';
 import AddDialog from '../../menu-dialog/add-dialog';
 import { useKeepNodeOpen } from '../../../../../hooks/use-keep-node-open';
 import RenameDialog from '../../menu-dialog/rename-dialog';
@@ -29,6 +37,12 @@ const FolderTreeNode = (props: MainProps) => {
   const folderId = node.data.id;
   const collectionId = node.data.collectionId;
   const folderName = node.data.name;
+
+  const setOpenedNodePaths = useSetRecoilState(openedNodePathsAtom);
+  useEffect(() => {
+    const path = node.options.path;
+    setOpenedNodePaths((prev) => [...prev, path]);
+  }, []);
 
   const handleAddQuery = (name: string, clearStateName: () => void) => {
     if (name.trim() === '') {

@@ -19,11 +19,14 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import React, { MouseEvent, useState } from 'react';
+import React, { MouseEvent, useEffect, useState } from 'react';
 import AddDialog from '../../menu-dialog/add-dialog';
 import { notificationService } from '../../../../../services';
-import { useRecoilValue } from 'recoil';
-import { workspaceChannelAtom } from '../../../../../recoil/atoms';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  openedNodePathsAtom,
+  workspaceChannelAtom,
+} from '../../../../../recoil/atoms';
 import { useKeepNodeOpen } from '../../../../../hooks/use-keep-node-open';
 import RenameDialog from '../../menu-dialog/rename-dialog';
 
@@ -35,9 +38,15 @@ const CollectionTreeNode = (props: MainProps) => {
   const [addFolderModalOpen, setAddFolderModalOpen] = useState(false);
   const [renameCollectionModalOpen, setRenameCollectionModalOpen] =
     useState(false);
+  const setOpenedNodePaths = useSetRecoilState(openedNodePathsAtom);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const collectionId = node.data.id;
   const collectionName = node.data.name;
+
+  useEffect(() => {
+    const path = node.options.path;
+    setOpenedNodePaths((prev) => [...prev, path]);
+  }, []);
 
   useKeepNodeOpen(node);
 
@@ -314,8 +323,8 @@ export const StyledNodeIconButton = styled(IconButton)<IconButtonProps>(
     padding: 2,
     borderRadius: 4,
     [`& .${svgIconClasses.root}`]: {
-      fontSize: 16,
-    },
+      fontSize: 16
+    }
   })
 );
 
