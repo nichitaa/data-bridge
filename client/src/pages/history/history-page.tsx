@@ -108,47 +108,6 @@ const HistoryPage = () => {
       </Box>
       <Divider />
       <Box sx={{ pt: 2 }}>
-        <Typography color={blueGrey.A100}>May 3, 2023</Typography>
-        <Box sx={{ pl: 3, pt: 1 }}>
-          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-            <Avatar
-              key={'S'}
-              sx={{
-                maxWidth: 24,
-                height: 24,
-                backgroundColor: teal[500],
-              }}
-            >
-              S
-            </Avatar>
-            <Typography>Sam</Typography>
-            <Typography color={blueGrey.A200}>created the</Typography>
-            <Typography>CollectionName</Typography>
-            <Typography color={blueGrey.A200}>collection</Typography>
-          </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
-        </Box>
-        <Box sx={{ pl: 3, pt: 1 }}>
-          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-            <Avatar
-              key={'S'}
-              sx={{
-                maxWidth: 24,
-                height: 24,
-                backgroundColor: teal[500],
-              }}
-            >
-              S
-            </Avatar>
-            <Typography>Sam</Typography>
-            <Typography color={blueGrey.A200}>edited the</Typography>
-            <Typography>QueryName</Typography>
-            <Typography color={blueGrey.A200}>query</Typography>
-          </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
-        </Box>
-      </Box>
-      <Box sx={{ pt: 2 }}>
         <Typography color={blueGrey.A100}>May 4, 2023</Typography>
         <Box sx={{ pl: 3, pt: 1 }}>
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -186,7 +145,29 @@ const HistoryPage = () => {
             <Typography>QueryName</Typography>
             <Typography color={blueGrey.A200}>query</Typography>
           </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
+          <Typography color={blueGrey.A100}>7:20PM</Typography>
+        </Box>
+      </Box>
+      <Box sx={{ pt: 2 }}>
+        <Typography color={blueGrey.A100}>May 3, 2023</Typography>
+        <Box sx={{ pl: 3, pt: 1 }}>
+          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+            <Avatar
+              key={'S'}
+              sx={{
+                maxWidth: 24,
+                height: 24,
+                backgroundColor: teal[500],
+              }}
+            >
+              J
+            </Avatar>
+            <Typography>John</Typography>
+            <Typography color={blueGrey.A200}>created the</Typography>
+            <Typography>FirstOne</Typography>
+            <Typography color={blueGrey.A200}>collection</Typography>
+          </Box>
+          <Typography color={blueGrey.A100}>6:46PM</Typography>
         </Box>
         <Box sx={{ pl: 3, pt: 1 }}>
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -205,7 +186,26 @@ const HistoryPage = () => {
             <Typography>QueryName</Typography>
             <Typography color={blueGrey.A200}>query</Typography>
           </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
+          <Typography color={blueGrey.A100}>5:20PM</Typography>
+        </Box>
+        <Box sx={{ pl: 3, pt: 1 }}>
+          <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+            <Avatar
+              key={'S'}
+              sx={{
+                maxWidth: 24,
+                height: 24,
+                backgroundColor: teal[500],
+              }}
+            >
+              M
+            </Avatar>
+            <Typography>Max</Typography>
+            <Typography color={blueGrey.A200}>edited the</Typography>
+            <Typography>QueryName</Typography>
+            <Typography color={blueGrey.A200}>query</Typography>
+          </Box>
+          <Typography color={blueGrey.A100}>3:50PM</Typography>
         </Box>
         <Box sx={{ pl: 3, pt: 1 }}>
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -220,11 +220,11 @@ const HistoryPage = () => {
               S
             </Avatar>
             <Typography>Sam</Typography>
-            <Typography color={blueGrey.A200}>edited the</Typography>
-            <Typography>QueryName</Typography>
-            <Typography color={blueGrey.A200}>query</Typography>
+            <Typography color={blueGrey.A200}>created the</Typography>
+            <Typography>AccTrace</Typography>
+            <Typography color={blueGrey.A200}>folder</Typography>
           </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
+          <Typography color={blueGrey.A100}>2:40PM</Typography>
         </Box>
         <Box sx={{ pl: 3, pt: 1 }}>
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -236,14 +236,14 @@ const HistoryPage = () => {
                 backgroundColor: teal[500],
               }}
             >
-              S
+              P
             </Avatar>
-            <Typography>Sam</Typography>
-            <Typography color={blueGrey.A200}>edited the</Typography>
-            <Typography>QueryName</Typography>
-            <Typography color={blueGrey.A200}>query</Typography>
+            <Typography>Pan</Typography>
+            <Typography color={blueGrey.A200}>created the</Typography>
+            <Typography>TransactionsReport</Typography>
+            <Typography color={blueGrey.A200}>collection</Typography>
           </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
+          <Typography color={blueGrey.A100}>11:40AM</Typography>
         </Box>
         <Box sx={{ pl: 3, pt: 1 }}>
           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
@@ -255,14 +255,14 @@ const HistoryPage = () => {
                 backgroundColor: teal[500],
               }}
             >
-              S
+              P
             </Avatar>
-            <Typography>Sam</Typography>
+            <Typography>Pan</Typography>
             <Typography color={blueGrey.A200}>edited the</Typography>
-            <Typography>QueryName</Typography>
+            <Typography>Employees</Typography>
             <Typography color={blueGrey.A200}>query</Typography>
           </Box>
-          <Typography color={blueGrey.A100}>8:40PM</Typography>
+          <Typography color={blueGrey.A100}>10:40PM</Typography>
         </Box>
       </Box>
     </Box>

@@ -49,6 +49,7 @@ export interface QueryInfo {
   name: string;
   rawSql: string;
   size: number | null;
+  snapshot: string | null
 }
 
 export interface QueryResult {

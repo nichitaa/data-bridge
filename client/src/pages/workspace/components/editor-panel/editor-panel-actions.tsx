@@ -72,7 +72,7 @@ const EditorPanelActions = () => {
   /** clean-up - reset query results on workspace change */
   useEffect(() => {
     setCurrentQueryResults(undefined);
-  }, [workspace]);
+  }, [workspace?.id, currentSelectedQueryData?.id]);
 
   const handleRunQuery = (enableAI: boolean) => {
     const request = {
@@ -230,7 +230,7 @@ const EditorPanelActions = () => {
               })
             )
           }
-          title={'Cron job'}
+          title={'Scheduler'}
         >
           <span>
             <StyledActionIconButton
