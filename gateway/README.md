@@ -7,6 +7,7 @@ $ # created with
 $ mix phx.new gateway --no-assets --no-ecto --no-html --no-gettext --no-mailer --no-live
 ```
 
+
 ```shell
 $ # setup and run localy
 $ mix setup
