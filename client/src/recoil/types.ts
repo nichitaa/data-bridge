@@ -4,6 +4,15 @@ export interface Workspace {
 }
 
 export interface WorkspaceInfo {
+  activityHistories: {
+    action: string;
+    actionPerformedTime: string;
+    entityName: string;
+    entityType: string;
+    id: string;
+    userName: string;
+    workspaceId: string;
+  }[];
   collaborators: CollaboratorInfo[];
   dataBaseType: number;
   collections: CollectionInfo[];
@@ -49,7 +58,7 @@ export interface QueryInfo {
   name: string;
   rawSql: string;
   size: number | null;
-  snapshot: string | null
+  snapshot: string | null;
 }
 
 export interface QueryResult {
@@ -60,7 +69,7 @@ export interface QueryResult {
   results: Record<string, string>[];
   totalCount: number;
   totalPages: number;
-  loading?: boolean
+  loading?: boolean;
 }
 
 export interface CurrentWorkspaceUserPresence {
