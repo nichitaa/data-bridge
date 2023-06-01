@@ -28,6 +28,13 @@ services:
       - '3000:3000'
     depends_on:
       - phoenix_gateway
+      
+  # Cron Service API
+  cron-service:
+    container_name:  cron_service
+    image: nicolaedockerid/cronservice
+    ports:
+      - 8083:80
 
   # Mailing Service API
   mailing-service:
