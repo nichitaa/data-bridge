@@ -34,7 +34,7 @@ services:
     container_name:  cron_service
     image: nicolaedockerid/cronservice
     ports:
-      - 8083:80
+      - 8084:80
 
   # Mailing Service API
   mailing-service:
