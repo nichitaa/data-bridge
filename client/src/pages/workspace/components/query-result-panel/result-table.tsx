@@ -15,14 +15,12 @@ import { produce } from 'immer';
 const ResultTable = () => {
   const currentQueryResults = useRecoilValue(currentQueryResultsAtom);
   const channel = useRecoilValue(workspaceChannelAtom);
-  const [currentSqlQuery, setCurrentSqlQuery] =
-    useRecoilState(currentSqlQueryAtom);
+  const currentSqlQuery = useRecoilValue(currentSqlQueryAtom);
   const currentWorkspaceInfo = useRecoilValue(currentWorkspaceInfoAtom);
   const [queryResults, setCurrentQueryResults] = useRecoilState(
     currentQueryResultsAtom
   );
-  const [currentSelectedQueryData, setCurrentSelectedQueryData] =
-    useRecoilState(currentSelectedQueryDataAtom);
+  const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
   const [previewSnapshotModal, setPreviewSnapshotModal] = useState(false);
 
   const data: Record<string, string>[] = useMemo(() => {
@@ -101,23 +99,25 @@ const ResultTable = () => {
 
   return (
     <>
-      <Table
-        items={data}
-        sortingDisabled
-        columnDefinitions={columnDefinitions}
-        resizableColumns
-        loading={queryResults?.loading}
-        loadingText={'Running query...'}
-        pagination={
-          <Pagination
-            currentPageIndex={currentQueryResults?.currentPage ?? 1}
-            pagesCount={currentQueryResults?.totalPages ?? 0}
-            onChange={({ detail: { currentPageIndex } }) =>
-              handlePaginateCurrentQuery(currentPageIndex)
-            }
-          />
-        }
-      />
+      {!previewSnapshotModal && (
+        <Table
+          items={data}
+          sortingDisabled
+          columnDefinitions={columnDefinitions}
+          resizableColumns
+          loading={queryResults?.loading}
+          loadingText={'Running query...'}
+          pagination={
+            <Pagination
+              currentPageIndex={currentQueryResults?.currentPage ?? 1}
+              pagesCount={currentQueryResults?.totalPages ?? 0}
+              onChange={({ detail: { currentPageIndex } }) =>
+                handlePaginateCurrentQuery(currentPageIndex)
+              }
+            />
+          }
+        />
+      )}
       <Dialog
         open={previewSnapshotModal}
         onClose={() => setPreviewSnapshotModal(false)}

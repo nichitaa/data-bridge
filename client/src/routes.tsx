@@ -3,11 +3,12 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import LoginPage from './pages/login-page';
 import Header from './shared/header/header';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   allWorkspacesAtom,
   authorizationStatusAtom,
   currentActiveUsersAtom,
+  currentSelectedQueryDataAtom,
   currentWorkspaceInfoAtom,
   jwtAtom,
   PhxSocketStatus,
@@ -22,6 +23,7 @@ import { Box, LinearProgress } from '@mui/material';
 import WorkspacePage from './pages/workspace/workspace-page';
 import { usePhoenixChannel } from './hooks/use-phoenix-channel';
 import { usePhxPresence } from './hooks/use-phx-presence';
+import { WorkspaceInfo } from './recoil/types';
 
 const PrivatePagesOutlet = () => {
   useInitFetchAllWorkspaces();
@@ -71,9 +73,11 @@ export const SyncWorkspaceInfoOutlet = () => {
     recoilAtom: workspaceChannelAtom,
   });
   const channel = useRecoilValue(workspaceChannelAtom);
-  const [workspaceInfo, setWorkspaceInfo] = useRecoilState(
-    currentWorkspaceInfoAtom
+  const setWorkspaceInfo = useSetRecoilState(currentWorkspaceInfoAtom);
+  const setCurrentSelectedQueryData = useSetRecoilState(
+    currentSelectedQueryDataAtom
   );
+
   const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);
 
@@ -82,8 +86,19 @@ export const SyncWorkspaceInfoOutlet = () => {
     if (channel !== undefined) {
       channel.on('workspace_info', (payload) => {
         if (payload.success) {
-          console.log('wpInfo: ', payload.data);
           setWorkspaceInfo(payload.data);
+          setCurrentSelectedQueryData((prev) => {
+            if (!prev) return prev;
+            const workspace = payload.data as WorkspaceInfo;
+            const collection = workspace.collections.find(
+              (x) => x.id === prev.collectionId
+            );
+            const folder = collection!.folders.find(
+              (x) => x.id === prev.folderId
+            );
+            const query = folder!.queries.find((x) => x.id === prev.id);
+            return { ...prev, cronJob: query!.cronJob };
+          });
         }
       });
       return () => {

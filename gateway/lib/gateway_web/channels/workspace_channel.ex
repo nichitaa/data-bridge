@@ -153,6 +153,38 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, response}, socket}
   end
 
+  def handle_in("setup_cron", params, socket) do
+    wp_id = workspace_id(socket)
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.setup_cron(params)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
+  def handle_in("chat_gpt_improve", params, socket) do
+    response =
+      socket.assigns.jwt
+      |> DbApi.client()
+      |> DbApi.chat_gpt_improve(params)
+
+    {:reply, {:ok, response}, socket}
+  end
+
+  def handle_in("stop_cron", params, socket) do
+    wp_id = workspace_id(socket)
+    cron_id = params["cronId"]
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.stop_cron(cron_id)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
   ## Side effects
 
   def handle_info(:workspace_info, socket) do

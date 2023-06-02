@@ -10,7 +10,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
 import { StyledActionIconButton } from '../editor-panel/editor-panel-actions';
 import { dbService, notificationService } from '../../../../services';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import {
   currentQueryResultsAtom,
   currentSelectedQueryDataAtom,
@@ -29,12 +29,9 @@ const ResultPanelHeader = () => {
   const jwt = useRecoilValue(jwtAtom);
   const sql = useRecoilValue(currentSqlQueryAtom);
   const workspace = useRecoilValue(currentWorkspaceInfoAtom);
-  const [queryResults, setCurrentQueryResults] = useRecoilState(
-    currentQueryResultsAtom
-  );
+  const queryResults = useRecoilValue(currentQueryResultsAtom);
   const channel = useRecoilValue(workspaceChannelAtom);
-  const [currentSelectedQueryData, setCurrentSelectedQueryData] =
-    useRecoilState(currentSelectedQueryDataAtom);
+  const currentSelectedQueryData = useRecoilValue(currentSelectedQueryDataAtom);
 
   const handleOnDownload = () =>
     downloadFile(() =>

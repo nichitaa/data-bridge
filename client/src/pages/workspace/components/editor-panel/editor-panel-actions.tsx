@@ -7,6 +7,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   generateUtilityClasses,
   IconButton,
   IconButtonProps,
@@ -40,6 +41,8 @@ import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { produce } from 'immer';
 import { blueGrey } from '@mui/material/colors';
+import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+import { LoadingButton } from '@mui/lab';
 
 const cls = generateUtilityClasses('EditorPanelActions', ['wrapper']);
 
@@ -52,12 +55,22 @@ const cronJobModalDefaultState: {
   collaborators: [],
   expression: '',
 };
+const chatGPTModalDefaultState: {
+  open: boolean;
+  response: string[];
+  loading: boolean;
+} = {
+  open: false,
+  response: [],
+  loading: false,
+};
 
 const EditorPanelActions = () => {
   const channel = useRecoilValue(workspaceChannelAtom);
   const [currentSqlQuery, setCurrentSqlQuery] =
     useRecoilState(currentSqlQueryAtom);
   const [cronJobModal, setCronJobModal] = useState(cronJobModalDefaultState);
+  const [gptModal, setGptModal] = useState(chatGPTModalDefaultState);
   const currentQueryDocs = useRecoilValue(currentQueryDocsAtom);
   const [currentQueryResults, setCurrentQueryResults] = useRecoilState(
     currentQueryResultsAtom
@@ -183,6 +196,87 @@ const EditorPanelActions = () => {
     );
   };
 
+  const handleSetupCronJob = () => {
+    if (
+      _.isEmpty(cronJobModal.expression) ||
+      _.isEmpty(cronJobModal.collaborators)
+    ) {
+      return notificationService.notify({
+        variant: 'error',
+        message: 'Cron expression and email list of collaborators is required!',
+        method: 'setup_cron',
+      });
+    }
+
+    const request = {
+      connectionString: workspace?.dbConnectionString,
+      dbType: workspace?.dataBaseType,
+      emailList: cronJobModal.collaborators.join(';'),
+      cronExpression: cronJobModal.expression,
+      queryId: queryId,
+    };
+    channel?.push('setup_cron', request).receive('ok', (response) => {
+      if (response.success) {
+        notificationService.notify({
+          variant: 'success',
+          message: 'Successfully created scheduled query job',
+          method: 'setup_cron',
+        });
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Could not create scheduled query job',
+          method: 'setup_cron',
+        });
+      }
+    });
+  };
+
+  const handleRemoveCronJob = () => {
+    const request = {
+      cronId: currentSelectedQueryData?.cronJob?.id,
+    };
+    channel?.push('stop_cron', request).receive('ok', (response) => {
+      if (response.success) {
+        notificationService.notify({
+          variant: 'success',
+          message: 'Cron job successfully removed',
+          method: 'stop_cron',
+        });
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Could not remove cron job',
+          method: 'stop_cron',
+        });
+      }
+    });
+  };
+
+  const handleChatGPTImproveRequest = () => {
+    const request = {
+      query: currentSqlQuery,
+    };
+    setGptModal((prev) => ({ ...prev, loading: true }));
+    channel?.push('chat_gpt_improve', request).receive('ok', (response) => {
+      setGptModal((prev) => ({ ...prev, loading: false }));
+      if (response.success) {
+        notificationService.notify({
+          variant: 'success',
+          message: 'Successfully received improvement response',
+          method: 'chat_gpt_improve',
+        });
+        setGptModal((prev) => ({ ...prev, response: response.data }));
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Could not received improvement response',
+          method: 'chat_gpt_improve',
+        });
+      }
+    });
+  };
+
   const handleSyncQuery = () => {
     const collection = workspace?.collections?.find(
       (x) => x.id === currentSelectedQueryData?.collectionId
@@ -197,6 +291,9 @@ const EditorPanelActions = () => {
   };
 
   const disabledQueryActionButtons = currentSelectedQueryData === undefined;
+
+  const hasCronJobConfigured =
+    currentSelectedQueryData && currentSelectedQueryData?.cronJob !== null;
 
   return (
     <>
@@ -271,7 +368,61 @@ const EditorPanelActions = () => {
             </StyledActionIconButton>
           </span>
         </Tooltip>
+        <Tooltip
+          onClick={() => setGptModal((prev) => ({ ...prev, open: true }))}
+          title={'Ask ChatGPT'}
+        >
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'info'}
+            >
+              <PsychologyAltIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
       </StyledEditorPanelActions>
+
+      <Dialog
+        open={gptModal.open}
+        fullWidth
+        maxWidth={'sm'}
+        onClose={() => setGptModal(chatGPTModalDefaultState)}
+      >
+        <DialogTitle>AI Hype Train</DialogTitle>
+        <DialogContent
+          sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+        >
+          <Typography color={blueGrey.A200} variant={'caption'}>
+            Ask ChatGPT how to improve current query, it may (or may not)
+            generate some useful hits for your!
+          </Typography>
+
+          {!_.isEmpty(gptModal.response) && (
+            <>
+              <br />
+              <Divider />
+              <Typography>Response</Typography>
+
+              {gptModal.response.map((x) => (
+                <Typography key={x} color={blueGrey.A100} variant={'caption'}>
+                  {x}
+                </Typography>
+              ))}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <LoadingButton
+            loading={gptModal.loading}
+            onClick={handleChatGPTImproveRequest}
+            variant={'contained'}
+          >
+            Ask
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
+
       <Dialog
         open={cronJobModal.open}
         fullWidth
@@ -285,7 +436,12 @@ const EditorPanelActions = () => {
           <TextField
             autoFocus
             required
-            value={cronJobModal.expression}
+            disabled={currentSelectedQueryData?.cronJob !== null}
+            value={
+              hasCronJobConfigured
+                ? currentSelectedQueryData!.cronJob!.cronExpresion
+                : cronJobModal.expression
+            }
             onChange={(e) =>
               setCronJobModal(
                 produce((draft) => {
@@ -297,7 +453,12 @@ const EditorPanelActions = () => {
             autoComplete={'off'}
           />
           <Select
-            value={cronJobModal.collaborators}
+            value={
+              hasCronJobConfigured
+                ? currentSelectedQueryData!.cronJob!.emailList.split(';')
+                : cronJobModal.collaborators
+            }
+            disabled={hasCronJobConfigured}
             multiple
             onChange={handleCronJobCollaboratorsChange}
             displayEmpty
@@ -324,12 +485,6 @@ const EditorPanelActions = () => {
                 {x.email}
               </MenuItem>
             ))}
-            <MenuItem key={'olss@gmail.com'} value={'olss@gmail.com'}>
-              olss@gmail.com
-            </MenuItem>
-            <MenuItem key={'Sam@gmail.com'} value={'Sam@gmail.com'}>
-              Sam@gmail.com
-            </MenuItem>
           </Select>
           <Typography color={blueGrey.A200} variant={'caption'}>
             When cron job will be triggered (based on cron expression), the
@@ -339,19 +494,16 @@ const EditorPanelActions = () => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => {
-              console.log('cron to create: ', cronJobModal);
-            }}
-            disabled={true}
+            onClick={handleRemoveCronJob}
+            disabled={!hasCronJobConfigured}
             color={'error'}
           >
             Delete
           </Button>
           <Button
-            onClick={() => {
-              console.log('cron to create: ', cronJobModal);
-            }}
+            onClick={handleSetupCronJob}
             variant={'contained'}
+            disabled={hasCronJobConfigured}
           >
             Create
           </Button>

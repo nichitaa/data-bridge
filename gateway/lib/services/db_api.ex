@@ -19,6 +19,10 @@ defmodule GatewayWeb.Services.DbApi do
     Tesla.post(client, "/api/Connector/DbScheme", payload) |> get_response_body()
   end
 
+  def chat_gpt_improve(client, payload) do
+    Tesla.post(client, "/api/Connector/Improve", payload) |> get_response_body()
+  end
+
   def client(token) do
     middleware = [
       Tesla.Middleware.Logger,

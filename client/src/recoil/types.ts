@@ -59,6 +59,12 @@ export interface QueryInfo {
   rawSql: string;
   size: number | null;
   snapshot: string | null;
+  cronJob: null | {
+    cronExpresion: string;
+    emailList: string;
+    id: string;
+    queryId: string;
+  };
 }
 
 export interface QueryResult {

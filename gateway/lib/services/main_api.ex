@@ -1,5 +1,4 @@
 defmodule GatewayWeb.Services.MainApi do
-
   ## Workspace API
 
   def list_workspaces(client) do
@@ -35,7 +34,11 @@ defmodule GatewayWeb.Services.MainApi do
   end
 
   def update_collaborator_role(client, wp_id, email, payload) do
-    Tesla.post(client, "/api/workspace/" <> wp_id <> "/collaborator/" <> email <> "/update-role", payload)
+    Tesla.post(
+      client,
+      "/api/workspace/" <> wp_id <> "/collaborator/" <> email <> "/update-role",
+      payload
+    )
     |> get_response_body()
   end
 
@@ -61,6 +64,14 @@ defmodule GatewayWeb.Services.MainApi do
   def update_query(client, wp_id, query_id, payload) do
     Tesla.patch(client, "/api/workspace/" <> wp_id <> "/query/" <> query_id, payload)
     |> get_response_body()
+  end
+
+  def setup_cron(client, payload) do
+    Tesla.post(client, "/api/setupcron", payload) |> get_response_body()
+  end
+
+  def stop_cron(client, cron_id) do
+    Tesla.post(client, "/api/stopcron/" <> cron_id, %{}) |> get_response_body()
   end
 
   def client(token) do

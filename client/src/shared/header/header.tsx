@@ -1,20 +1,15 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  darken,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Box, Button, darken, Toolbar } from '@mui/material';
 import CurrentWorkspaceSelect from './current-workspace-select';
 import UserMenu from './user-menu';
 import ActiveUsersAvatars from './active-users-avatars';
 import WorkspaceMenu from './workspace-menu';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const Header = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
-
+  const location = useLocation();
+  const lastPathname = location.pathname.split('/').at(-1);
+  const isOnHistoryPage = lastPathname === 'history';
   return (
     <AppBar
       position='static'
@@ -36,9 +31,11 @@ const Header = () => {
           {workspaceId && (
             <Link
               style={{ textDecoration: 'none', color: 'inherit' }}
-              to={`${workspaceId}/history`}
+              to={isOnHistoryPage ? workspaceId : `${workspaceId}/history`}
             >
-              <Button variant={'text'} size={'medium'}>Activity</Button>
+              <Button variant={'text'} size={'medium'}>
+                {isOnHistoryPage ? 'Workspace' : 'Activity'}
+              </Button>
             </Link>
           )}
         </Box>
