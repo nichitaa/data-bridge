@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import LoginPage from './pages/login-page';
 import Header from './shared/header/header';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   allWorkspacesAtom,
   authorizationStatusAtom,
@@ -77,14 +77,34 @@ export const SyncWorkspaceInfoOutlet = () => {
   const setCurrentSelectedQueryData = useSetRecoilState(
     currentSelectedQueryDataAtom
   );
-
+  const navigate = useNavigate();
   const setCurrentActiveUsers = useSetRecoilState(currentActiveUsersAtom);
   const { handlePresenceSync } = usePhxPresence(channel);
+
+  const applyQueryVersionAndNavigate = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (queryId) => {
+        const workspace = await snapshot.getPromise(currentWorkspaceInfoAtom);
+        for (const c of workspace?.collections ?? []) {
+          for (const f of c?.folders) {
+            for (const q of f.queries) {
+              if (q.id === queryId) {
+                set(currentSelectedQueryDataAtom, q);
+                navigate(`/workspace/${workspace?.id}`);
+                return;
+              }
+            }
+          }
+        }
+      },
+    []
+  );
 
   /** subscribe to channel emissions */
   useEffect(() => {
     if (channel !== undefined) {
       channel.on('workspace_info', (payload) => {
+        console.log('[workspace_info]: ', payload);
         if (payload.success) {
           setWorkspaceInfo(payload.data);
           setCurrentSelectedQueryData((prev) => {
@@ -101,12 +121,16 @@ export const SyncWorkspaceInfoOutlet = () => {
           });
         }
       });
+      channel.on('version_applied', async (payload) => {
+        await applyQueryVersionAndNavigate(payload.queryId);
+      });
       return () => {
         // clean up subscriptions refs
         channel.off('workspace_info');
+        channel.off('version_applied');
       };
     }
-  }, [channel]);
+  }, [channel, applyQueryVersionAndNavigate]);
 
   /** currently active users on this workspace */
   useEffect(() => {

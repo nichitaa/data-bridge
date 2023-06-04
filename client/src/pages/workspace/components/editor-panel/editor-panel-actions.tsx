@@ -27,7 +27,7 @@ import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import UpdateIcon from '@mui/icons-material/Update';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   currentQueryDocsAtom,
   currentQueryResultsAtom,
@@ -43,6 +43,7 @@ import { produce } from 'immer';
 import { blueGrey } from '@mui/material/colors';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 import { LoadingButton } from '@mui/lab';
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 
 const cls = generateUtilityClasses('EditorPanelActions', ['wrapper']);
 
@@ -153,29 +154,59 @@ const EditorPanelActions = () => {
   };
 
   const handleSaveQuery = () => {
-    if (currentSelectedQueryData !== undefined) {
-      const request = {
-        queryId: currentSelectedQueryData.id,
-        folderId: currentSelectedQueryData.folderId,
-        collectionId: currentSelectedQueryData.collectionId,
-        rawSql: currentSqlQuery,
-        documentation: currentQueryDocs,
-      };
-      channel?.push('update_query', request).receive('ok', (response) => {
-        if (response.success) {
-          notificationService.notify({
-            variant: 'success',
-            message: response.message,
-            method: 'save_query_raw_sql',
-          });
-        } else {
-          notificationService.notify({
-            variant: 'error',
-            message: 'Could not update query',
-            method: 'save_query_raw_sql',
-          });
-        }
-      });
+    return new Promise((resolve) => {
+      if (currentSelectedQueryData !== undefined) {
+        const request = {
+          queryId: currentSelectedQueryData.id,
+          folderId: currentSelectedQueryData.folderId,
+          collectionId: currentSelectedQueryData.collectionId,
+          rawSql: currentSqlQuery,
+          documentation: currentQueryDocs,
+        };
+        channel?.push('update_query', request).receive('ok', (response) => {
+          if (response.success) {
+            notificationService.notify({
+              variant: 'success',
+              message: response.message,
+              method: 'save_query_raw_sql',
+            });
+          } else {
+            notificationService.notify({
+              variant: 'error',
+              message: 'Could not update query',
+              method: 'save_query_raw_sql',
+            });
+          }
+          resolve(response.success);
+        });
+      }
+    });
+  };
+
+  const handleSaveQueryVersion = async () => {
+    const saveResponse = await handleSaveQuery();
+    if (saveResponse) {
+      console.log('success save response received');
+      if (currentSelectedQueryData !== undefined) {
+        const request = {
+          queryId: currentSelectedQueryData.id
+        };
+        channel?.push('create_query_version', request).receive('ok', (response) => {
+          if (response.success) {
+            notificationService.notify({
+              variant: 'success',
+              message: response.message,
+              method: 'create_query_version',
+            });
+          } else {
+            notificationService.notify({
+              variant: 'error',
+              message: 'Could not create a new query version',
+              method: 'create_query_version',
+            });
+          }
+        });
+      }
     }
   };
 
@@ -345,6 +376,16 @@ const EditorPanelActions = () => {
               variant={'success'}
             >
               <SaveOutlinedIcon />
+            </StyledActionIconButton>
+          </span>
+        </Tooltip>
+        <Tooltip onClick={handleSaveQueryVersion} title={'Save query version'}>
+          <span>
+            <StyledActionIconButton
+              disabled={disabledQueryActionButtons}
+              variant={'success'}
+            >
+              <BeenhereIcon />
             </StyledActionIconButton>
           </span>
         </Tooltip>

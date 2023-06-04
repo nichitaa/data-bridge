@@ -4,15 +4,22 @@ import {
   Divider,
   MenuItem,
   Select,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import _ from 'lodash';
 import { useRecoilValue } from 'recoil';
-import { currentWorkspaceInfoAtom } from '../../recoil/atoms';
+import {
+  currentWorkspaceInfoAtom,
+  workspaceChannelAtom,
+} from '../../recoil/atoms';
 import { blueGrey, teal } from '@mui/material/colors';
 import { Fragment, useState } from 'react';
 import dayjs from 'dayjs';
+import RestoreIcon from '@mui/icons-material/Restore';
 import { produce } from 'immer';
+import { StyledActionIconButton } from '../workspace/components/editor-panel/editor-panel-actions';
+import { notificationService } from '../../services';
 
 const HistoryPage = () => {
   const workspace = useRecoilValue(currentWorkspaceInfoAtom);
@@ -21,6 +28,7 @@ const HistoryPage = () => {
     actionType: '',
     resource: '',
   });
+  const channel = useRecoilValue(workspaceChannelAtom);
 
   const history = _(workspace?.activityHistories ?? [])
     .orderBy((x) => Number(x.actionPerformedTime), 'desc')
@@ -45,6 +53,25 @@ const HistoryPage = () => {
     .sortBy(([_, items]) => Number(items[0].actionPerformedTime))
     .fromPairs()
     .value();
+
+  const handleRollbackToPreviousQueryVersion = (queryId, version) => {
+    const request = { queryId, version };
+    channel?.push('apply_query_version', request).receive('ok', (response) => {
+      if (response.success) {
+        notificationService.notify({
+          variant: 'success',
+          message: response.message,
+          method: 'apply_query_version',
+        });
+      } else {
+        notificationService.notify({
+          variant: 'error',
+          message: 'Could not rollback to previous query version',
+          method: 'apply_query_version',
+        });
+      }
+    });
+  };
 
   return (
     <Box sx={{ p: 2 }}>
@@ -115,6 +142,9 @@ const HistoryPage = () => {
             <MenuItem key={'renamed'} value={'renamed'}>
               renamed
             </MenuItem>
+            <MenuItem key={'applied'} value={'applied'}>
+              applied
+            </MenuItem>
             <MenuItem key={'edited'} value={'edited'}>
               edited
             </MenuItem>
@@ -162,6 +192,9 @@ const HistoryPage = () => {
             <MenuItem key={'query'} value={'query'}>
               query
             </MenuItem>
+            <MenuItem key={'queryVersion'} value={'queryVersion'}>
+              query version
+            </MenuItem>
             <MenuItem key={'workspace'} value={'workspace'}>
               workspace
             </MenuItem>
@@ -199,9 +232,41 @@ const HistoryPage = () => {
                         {el.action} the
                       </Typography>
                       <Typography>{el.entityName}</Typography>
-                      <Typography color={blueGrey.A200}>
-                        {el.entityType}
-                      </Typography>
+                      {el.entityType === 'queryVersion' ? (
+                        <>
+                          <Typography color={blueGrey.A200}>version</Typography>
+                          <Typography color={blueGrey.A200}>
+                            , for the
+                          </Typography>
+                          <Typography>
+                            {JSON.parse(el.metadata).queryName}
+                          </Typography>
+                          <Typography color={blueGrey.A200}>query</Typography>
+
+                          {el.action === 'created' && (
+                            <Tooltip
+                              onClick={() => {
+                                const parsed = JSON.parse(el.metadata);
+                                handleRollbackToPreviousQueryVersion(
+                                  parsed.queryId,
+                                  el.entityName
+                                );
+                              }}
+                              title={'Rollback to this version'}
+                            >
+                              <span>
+                                <StyledActionIconButton variant={'warning'}>
+                                  <RestoreIcon />
+                                </StyledActionIconButton>
+                              </span>
+                            </Tooltip>
+                          )}
+                        </>
+                      ) : (
+                        <Typography color={blueGrey.A200}>
+                          {el.entityType}
+                        </Typography>
+                      )}
                     </Box>
                     <Typography color={blueGrey.A100}>{el.time}</Typography>
                   </Box>

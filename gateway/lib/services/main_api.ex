@@ -74,9 +74,24 @@ defmodule GatewayWeb.Services.MainApi do
     Tesla.post(client, "/api/stopcron/" <> cron_id, %{}) |> get_response_body()
   end
 
+  def create_query_version(client, wp_id, query_id) do
+    Tesla.post(client, "/api/workspace/" <> wp_id <> "/query/" <> query_id <> "/saveVersion", %{})
+    |> get_response_body()
+  end
+
+  def apply_query_version(client, wp_id, query_id, version) do
+    Tesla.patch(
+      client,
+      "/api/workspace/" <>
+        wp_id <> "/query/" <> query_id <> "/version/" <> version <> "/applyQueryVersion",
+      %{}
+    )
+    |> get_response_body()
+  end
+
   def client(token) do
     middleware = [
-      Tesla.Middleware.Logger,
+#      Tesla.Middleware.Logger,
       Tesla.Middleware.KeepRequest,
       {Tesla.Middleware.JSON,
        decode_content_types: ["application/problem+json", "application/json"]},

@@ -12,6 +12,7 @@ export interface WorkspaceInfo {
     id: string;
     userName: string;
     workspaceId: string;
+    metadata: string;
   }[];
   collaborators: CollaboratorInfo[];
   dataBaseType: number;

@@ -185,7 +185,38 @@ defmodule GatewayWeb.WorkspaceChannel do
     {:reply, {:ok, response}, socket}
   end
 
+  def handle_in("create_query_version", params, socket) do
+    wp_id = workspace_id(socket)
+    query_id = params["queryId"]
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.create_query_version(wp_id, query_id)
+
+    send(self(), :workspace_info)
+    {:reply, {:ok, response}, socket}
+  end
+
+  def handle_in("apply_query_version", params, socket) do
+    wp_id = workspace_id(socket)
+    query_id = params["queryId"]
+    version = params["version"]
+
+    response =
+      main_api_client_with_jwt(socket)
+      |> MainApi.apply_query_version(wp_id, query_id, version)
+
+    send(self(), :workspace_info)
+    # not using push directly because the messages must arrive in this specific order
+    send(self(), {:version_applied, query_id})
+    {:reply, {:ok, response}, socket}
+  end
+
   ## Side effects
+
+  def handle_info({:version_applied, queryId}, socket) do
+    push(socket, "version_applied", %{queryId: queryId})
+  end
 
   def handle_info(:workspace_info, socket) do
     dbg("[wp] workspace_info")
